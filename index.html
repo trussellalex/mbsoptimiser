@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBS Billing Optimizer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --primary: #1a73e8;
+    --primary-light: #e8f0fe;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #dadce0;
+    --success: #0d904f;
+    --success-light: #e6f4ea;
+    --warn: #e37400;
+    --warn-light: #fef7e0;
+    --danger: #d93025;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .app-header {
+    background: var(--primary);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .app-header h1 { font-size: 20px; font-weight: 600; }
+  .app-header .subtitle { font-size: 13px; opacity: 0.85; }
+
+  .tab-bar {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+  }
+
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover { color: var(--primary); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card h2 { font-size: 16px; margin-bottom: 12px; color: var(--text); }
+  .card h3 { font-size: 14px; margin-bottom: 8px; color: var(--text-secondary); }
+
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+  .btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--primary); color: var(--primary); }
+  .btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+  .btn.success { background: var(--success); color: white; border-color: var(--success); }
+
+  .duration-btns .btn { min-width: 80px; text-align: center; }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-label { flex: 1; font-size: 14px; }
+  .toggle-hint { font-size: 12px; color: var(--text-secondary); }
+
+  .toggle {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: #ccc;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--primary); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .toggle.on::after { transform: translateX(20px); }
+
+  .result-card {
+    border-left: 4px solid var(--success);
+    background: var(--success-light);
+  }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .result-item:last-child { border-bottom: none; }
+
+  .item-num {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--primary);
+    min-width: 70px;
+  }
+
+  .item-desc { flex: 1; font-size: 13px; padding: 0 12px; }
+  .item-fee { font-weight: 600; font-size: 15px; color: var(--success); white-space: nowrap; }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 2px solid rgba(0,0,0,0.1);
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .warn-box {
+    background: var(--warn-light);
+    border: 1px solid var(--warn);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .warn-box strong { color: var(--warn); }
+
+  .search-box {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--primary); }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-row label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+  .filter-row select {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    background: white;
+    outline: none;
+  }
+
+  .browse-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .browse-item:hover { background: var(--primary-light); }
+
+  .browse-item .item-num { font-size: 15px; min-width: 60px; }
+  .browse-item .item-desc { font-size: 13px; line-height: 1.4; }
+  .browse-item .item-fee { font-size: 14px; }
+
+  .item-detail-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .item-detail {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .item-detail h2 { margin-bottom: 16px; }
+  .item-detail .field { margin-bottom: 12px; }
+  .item-detail .field-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px; }
+  .item-detail .field-value { font-size: 14px; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  .tag-telehealth { background: #e8f0fe; color: #1a73e8; }
+  .tag-inperson { background: #e6f4ea; color: #0d904f; }
+  .tag-initial { background: #fce8e6; color: #d93025; }
+  .tag-subsequent { background: #fef7e0; color: #e37400; }
+
+  .xml-loader {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .xml-loader:hover { border-color: var(--primary); }
+  .xml-loader.loaded { border-color: var(--success); background: var(--success-light); }
+
+  .data-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 12px;
+  }
+
+  .data-badge.builtin { background: var(--warn-light); color: var(--warn); }
+  .data-badge.loaded { background: var(--success-light); color: var(--success); }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .reset-btn:hover { background: rgba(255,255,255,0.1); }
+
+  @media (max-width: 600px) {
+    .container { padding: 12px; }
+    .card { padding: 14px; }
+    .tab { padding: 10px 14px; font-size: 13px; }
+    .result-item { flex-direction: column; gap: 4px; }
+    .item-num { font-size: 16px; }
+  }
+
+  /* ── Optimizer two-column layout ── */
+  .optimizer-grid {
+    display: grid;
+    grid-template-columns: 1fr 268px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .optimizer-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Reference panel (right column) ── */
+  .ref-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: sticky;
+    top: 112px;
+    max-height: calc(100vh - 130px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ref-panel-header {
+    padding: 10px 14px;
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .ref-panel-body {
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .ref-panel-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .ref-panel-item:hover { background: var(--primary-light); }
+  .ref-panel-item:last-child { border-bottom: none; }
+
+  .rpi-num {
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 48px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .rpi-desc {
+    color: var(--text-secondary);
+    line-height: 1.3;
+    font-size: 11px;
+    flex: 1;
+  }
+
+  .rpi-fee {
+    font-weight: 600;
+    color: var(--success);
+    white-space: nowrap;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .mode-info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--primary-light);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .coclaim-card {
+    border-left: 4px solid var(--warn);
+    background: #fffaf0;
+    border: 1px solid #f5c842;
+    border-left: 4px solid var(--warn);
+  }
+
+  .coclaim-card h2 { color: var(--warn); }
+
+  .coclaim-intro {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .coclaim-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .coclaim-item:last-child { border-bottom: none; }
+
+  .coclaim-note {
+    font-size: 11px;
+    color: var(--warn);
+    margin-top: 3px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo, useCallback, useRef, useEffect } = React;
+
+// ─── MBS DATA — 1 NOVEMBER 2025 ──────────────────────────────────────
+// Sourced directly from: Medicare Benefits Schedule Book, 1 November 2025
+// (Department of Health, Disability and Ageing)
+// Fees shown are Schedule Fees. Medicare benefit is typically 85% for
+// specialist/consultant items (75% for out-of-hospital) and 100% for GP items.
+
+const BUILTIN_ITEMS = [
+
+  // ══ GROUP A1: GP ATTENDANCES (In-Person, Consulting Rooms) ══════════
+  // Item 3 — Level A (brief/obvious problem)
+  { itemNum: "3", description: "Professional attendance at consulting rooms by a GP for an obvious problem characterised by the straightforward nature of the task that requires a short patient history and, if required, limited examination and management — each attendance.", scheduleFee: 20.05, benefit100: 20.05, category: "1", group: "A1", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 6, tags: ["Level A", "Brief"] },
+  // Item 23 — Level B (6–<20 min)
+  { itemNum: "23", description: "Professional attendance by a GP at consulting rooms lasting at least 6 minutes and less than 20 minutes, including any of the following that are clinically relevant: taking a patient history; performing a clinical examination; arranging investigations; implementing a management plan; providing preventive health care; for one or more health-related issues, with appropriate documentation.", scheduleFee: 43.90, benefit100: 43.90, category: "1", group: "A1", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 6, maxDuration: 20, tags: ["Level B", "Standard"] },
+  // Item 36 — Level C (≥20 min)
+  { itemNum: "36", description: "Professional attendance by a GP at consulting rooms lasting at least 20 minutes, including any of the following that are clinically relevant: taking a detailed patient history; performing a clinical examination; arranging investigations; implementing a management plan; providing preventive health care; for one or more health-related issues, with appropriate documentation — each attendance.", scheduleFee: 84.90, benefit100: 84.90, category: "1", group: "A1", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: 40, tags: ["Level C", "Long"] },
+  // Item 44 — Level D (≥40 min)
+  { itemNum: "44", description: "Professional attendance by a GP at consulting rooms lasting at least 40 minutes, including any of the following that are clinically relevant: taking an extensive patient history; performing a clinical examination; arranging investigations; implementing a management plan; providing preventive health care; for one or more health-related issues, with appropriate documentation — each attendance.", scheduleFee: 125.10, benefit100: 125.10, category: "1", group: "A1", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 40, maxDuration: 60, tags: ["Level D", "Prolonged"] },
+  // Item 123 — Level E (≥60 min)
+  { itemNum: "123", description: "Professional attendance by a GP at consulting rooms lasting at least 60 minutes, including any of the following that are clinically relevant: taking an extensive patient history; performing a clinical examination; arranging investigations; implementing a management plan; providing preventive health care; for one or more health-related issues, with appropriate documentation.", scheduleFee: 202.65, benefit100: 202.65, category: "1", group: "A1", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 60, maxDuration: null, tags: ["Level E", "Extended"] },
+
+  // ══ GROUP A1: GP TELEHEALTH — VIDEO (A40 Subgroup 1) ════════════════
+  // Item 91790 — Level A video
+  { itemNum: "91790", description: "Video attendance by a GP for an obvious problem characterised by the straightforward nature of the task that requires a short patient history and, if required, limited management. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 20.05, benefit100: 20.05, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: 6, tags: ["Level A", "Video"] },
+  // Item 91800 — Level B video (6–<20 min)
+  { itemNum: "91800", description: "Video attendance by a GP lasting at least 6 minutes but less than 20 minutes, including any of the following that are clinically relevant: taking a short patient history; arranging any necessary investigation; implementing a management plan; providing appropriate preventative health care. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 43.90, benefit100: 43.90, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 6, maxDuration: 20, tags: ["Level B", "Video"] },
+  // Item 91801 — Level C video (≥20 min)
+  { itemNum: "91801", description: "Video attendance by a GP lasting at least 20 minutes, including any of the following that are clinically relevant: taking a detailed patient history; arranging investigations; implementing a management plan; providing appropriate preventative health care. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 84.90, benefit100: 84.90, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: 40, tags: ["Level C", "Video"] },
+  // Item 91802 — Level D video (≥40 min)
+  { itemNum: "91802", description: "Video attendance by a GP lasting at least 40 minutes, including any of the following that are clinically relevant: taking an extensive patient history; arranging investigations; implementing a management plan; providing appropriate preventative health care. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 125.10, benefit100: 125.10, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 40, maxDuration: 60, tags: ["Level D", "Video"] },
+  // Item 91920 — Level E video (≥60 min)
+  { itemNum: "91920", description: "Video attendance by a GP lasting at least 60 minutes, including any of the following that are clinically relevant: taking an extensive patient history; arranging investigations; implementing a management plan; providing preventive health care; for one or more health related issues, with appropriate documentation. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 202.65, benefit100: 202.65, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 60, maxDuration: null, tags: ["Level E", "Video"] },
+
+  // ══ GROUP A40: GP PHONE SERVICES (Subgroup 2) ════════════════════════
+  // Item 91890 — Level A phone (<6 min)
+  { itemNum: "91890", description: "Phone attendance by a GP lasting less than 6 minutes for an obvious problem characterised by the straightforward nature of the task that requires a short patient history and, if required, limited management. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 20.05, benefit100: 20.05, category: "1", group: "A40", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: 6, tags: ["Level A", "Phone"] },
+  // Item 91891 — Level B phone (≥6 min)
+  { itemNum: "91891", description: "Phone attendance by a GP lasting at least 6 minutes, including any of the following that are clinically relevant: taking a short patient history; arranging investigations; implementing a management plan; providing appropriate preventative health care. Must be performed by the patient's eligible telehealth practitioner.", scheduleFee: 43.90, benefit100: 43.90, category: "1", group: "A40", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 6, maxDuration: 20, tags: ["Level B", "Phone"] },
+  // Item 91900 — Level C phone (≥20 min, MyMedicare registered)
+  { itemNum: "91900", description: "Phone attendance by a GP to a patient registered under MyMedicare with the billing practice, lasting at least 20 minutes, including any of the following that are clinically relevant: taking a detailed patient history; arranging investigations; implementing a management plan; providing appropriate preventative health care; for one or more health related issues, with appropriate documentation.", scheduleFee: 84.90, benefit100: 84.90, category: "1", group: "A40", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 20, maxDuration: 40, tags: ["Level C", "Phone", "MyMedicare"] },
+  // Item 91910 — Level D phone (≥40 min, MyMedicare)
+  { itemNum: "91910", description: "Phone attendance by a GP to a patient registered under MyMedicare with the billing practice, lasting at least 40 minutes, including any of the following that are clinically relevant: taking an extensive patient history; arranging investigations; implementing a management plan; providing appropriate preventive health care; for one or more health related issues, with appropriate documentation.", scheduleFee: 125.10, benefit100: 125.10, category: "1", group: "A40", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 40, maxDuration: null, tags: ["Level D", "Phone", "MyMedicare"] },
+
+  // ══ GROUP A14: GP HEALTH ASSESSMENTS ════════════════════════════════
+  // Item 701 — Brief health assessment (≤30 min)
+  { itemNum: "701", description: "Professional attendance by a GP to perform a brief health assessment, lasting not more than 30 minutes, including: collection of relevant information including taking a patient history; a basic physical examination; initiating interventions and referrals as indicated; providing the patient with preventive health care advice and information.", scheduleFee: 69.20, benefit100: 69.20, category: "1", group: "A14", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Health Assessment", "Brief", "≤30 min"] },
+  // Item 703 — Standard health assessment (>30 to <45 min)
+  { itemNum: "703", description: "Professional attendance by a GP to perform a standard health assessment, lasting more than 30 minutes but less than 45 minutes, including: detailed information collection including a patient history; an extensive physical examination; initiating interventions and referrals as indicated; providing a preventive health care strategy for the patient.", scheduleFee: 160.85, benefit100: 160.85, category: "1", group: "A14", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Health Assessment", "Standard", "30–45 min"] },
+  // Item 705 — Long health assessment (≥45 to <60 min)
+  { itemNum: "705", description: "Professional attendance by a GP to perform a long health assessment, lasting at least 45 minutes but less than 60 minutes, including: comprehensive information collection including a patient history; an extensive examination of the patient's medical condition and physical function; initiating interventions and referrals as indicated; providing a basic preventive health care management plan for the patient.", scheduleFee: 222.00, benefit100: 222.00, category: "1", group: "A14", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Health Assessment", "Long", "45–60 min"] },
+  // Item 707 — Prolonged health assessment (≥60 min)
+  { itemNum: "707", description: "Professional attendance by a GP to perform a prolonged health assessment (lasting at least 60 minutes), including: comprehensive information collection including a patient history; an extensive examination of the patient's medical condition, and physical, psychological and social function; initiating interventions or referrals as indicated; providing a comprehensive preventive health care management plan for the patient.", scheduleFee: 313.60, benefit100: 313.60, category: "1", group: "A14", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Health Assessment", "Prolonged", "≥60 min"] },
+  // Item 715 — ATSI health assessment
+  { itemNum: "715", description: "Professional attendance by a GP at consulting rooms or in another place (other than hospital or RACF) for a health assessment of a patient who is of Aboriginal or Torres Strait Islander descent — not more than once in a 9 month period.", scheduleFee: 247.65, benefit100: 247.65, category: "1", group: "A14", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Health Assessment", "ATSI", "Aboriginal", "Torres Strait Islander"] },
+
+  // ══ GROUP A15: GP CHRONIC CONDITION MANAGEMENT ══════════════════════
+  // Item 965 — GP Chronic Condition Management Plan
+  { itemNum: "965", description: "Professional attendance by a GP to prepare a GP chronic condition management plan for a patient.", scheduleFee: 156.55, benefit100: 156.55, category: "1", group: "A15", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Chronic Condition", "Management Plan", "GPMP"] },
+  // Item 967 — Review of GP Chronic Condition Management Plan
+  { itemNum: "967", description: "Professional attendance by a GP to review a GP chronic condition management plan prepared by the GP or an associated medical practitioner.", scheduleFee: 156.55, benefit100: 156.55, category: "1", group: "A15", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Chronic Condition", "Review", "GPMP Review"] },
+  // Item 729 — GP contribution to multidisciplinary care plan (by another provider)
+  { itemNum: "729", description: "Contribution by a GP (not including a specialist or consultant physician) to a multidisciplinary care plan prepared by another provider, or a review of such a plan prepared by another provider.", scheduleFee: 82.10, benefit100: 82.10, category: "1", group: "A15", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Chronic Condition", "Multidisciplinary", "MCP"] },
+
+  // ══ GROUP A20: GP MENTAL HEALTH TREATMENT ═══════════════════════════
+  // Item 2700 — MHTP preparation (≥20 to <40 min, no mental health skills training required)
+  { itemNum: "2700", description: "Professional attendance by a GP (including a GP who has not undertaken mental health skills training) of at least 20 minutes but less than 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 83.65, benefit100: 83.65, category: "1", group: "A20", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: 40, tags: ["Mental Health", "MHTP", "Treatment Plan", "20–40 min"] },
+  // Item 2701 — MHTP preparation (≥40 min, no mental health skills training required)
+  { itemNum: "2701", description: "Professional attendance by a GP (including a GP who has not undertaken mental health skills training) of at least 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 123.15, benefit100: 123.15, category: "1", group: "A20", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 40, maxDuration: null, tags: ["Mental Health", "MHTP", "Treatment Plan", "≥40 min"] },
+  // Item 2715 — MHTP preparation (≥20 to <40 min, WITH mental health skills training)
+  { itemNum: "2715", description: "Professional attendance by a GP who has undertaken mental health skills training, of at least 20 minutes but less than 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 106.20, benefit100: 106.20, category: "1", group: "A20", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: 40, tags: ["Mental Health", "MHTP", "Treatment Plan", "Trained GP", "20–40 min"] },
+  // Item 2717 — MHTP preparation (≥40 min, WITH mental health skills training)
+  { itemNum: "2717", description: "Professional attendance by a GP who has undertaken mental health skills training, of at least 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 156.45, benefit100: 156.45, category: "1", group: "A20", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 40, maxDuration: null, tags: ["Mental Health", "MHTP", "Treatment Plan", "Trained GP", "≥40 min"] },
+  // Item 2721 — Focussed Psychological Strategies (≥30 to <40 min)
+  { itemNum: "2721", description: "Professional attendance at consulting rooms by a GP registered as meeting credentialling requirements, for providing focussed psychological strategies for assessed mental disorders, lasting at least 30 minutes but less than 40 minutes.", scheduleFee: 108.20, benefit100: 108.20, category: "1", group: "A20", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 40, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "30–40 min"] },
+  // Item 2725 — Focussed Psychological Strategies (≥40 min)
+  { itemNum: "2725", description: "Professional attendance at consulting rooms by a GP registered as meeting credentialling requirements, for providing focussed psychological strategies for assessed mental disorders, lasting at least 40 minutes.", scheduleFee: 154.85, benefit100: 154.85, category: "1", group: "A20", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 40, maxDuration: null, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "≥40 min"] },
+
+  // ══ GROUP A3: SPECIALIST ATTENDANCES (In-Person) ════════════════════
+  // Item 104 — Specialist initial attendance (>5 min)
+  { itemNum: "104", description: "Professional attendance at consulting rooms or hospital by a specialist in the practice of the specialist's specialty after referral — initial attendance in a single course of treatment. (Other than a service to which item 106, 109, 125 or 16401 applies.)", scheduleFee: 101.30, benefit85: 86.15, benefit75: 76.00, category: "1", group: "A3", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Initial", "Referred"] },
+  // Item 105 — Specialist subsequent attendance (>5 min)
+  { itemNum: "105", description: "Professional attendance by a specialist in the practice of the specialist's specialty following referral — an attendance after the initial attendance in a single course of treatment, at consulting rooms or hospital. (Other than a service to which item 126 or 16404 applies.)", scheduleFee: 50.95, benefit85: 43.35, benefit75: 38.25, category: "1", group: "A3", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent"] },
+
+  // ══ GROUP A4: CONSULTANT PHYSICIAN ATTENDANCES (In-Person) ══════════
+  // Item 110 — Consultant physician initial attendance
+  { itemNum: "110", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral by a referring practitioner — initial attendance in a single course of treatment.", scheduleFee: 178.70, benefit85: 151.90, benefit75: 134.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Initial", "Referred", "Consultant Physician"] },
+  // Item 116 — Consultant physician subsequent attendance (not minor)
+  { itemNum: "116", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each attendance (other than a service to which item 119 applies) after the first in a single course of treatment.", scheduleFee: 89.40, benefit85: 76.00, benefit75: 67.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Consultant Physician"] },
+  // Item 119 — Consultant physician subsequent minor attendance
+  { itemNum: "119", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each minor attendance after the first in a single course of treatment.", scheduleFee: 50.95, benefit85: 43.35, benefit75: 38.25, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Consultant Physician"] },
+  // Item 132 — Complex assessment (≥2 morbidities, ≥45 min, initial, with management plan)
+  { itemNum: "132", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 45 minutes for an initial assessment of a patient with at least 2 morbidities following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Not applicable more than once in preceding 12 months by the same physician.", scheduleFee: 312.45, benefit85: 265.60, benefit75: 234.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min"] },
+  // Item 133 — Complex review (≥2 morbidities, ≥20 min, subsequent)
+  { itemNum: "133", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 20 minutes after the initial attendance for a review of a patient with at least 2 morbidities, if a modified management plan is provided to the referring practitioner. Claimable after item 132; maximum twice per 12 months.", scheduleFee: 156.45, benefit85: 133.00, benefit75: 117.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Complex", "≥2 Morbidities", "Review", "≥20 min"] },
+
+  // ══ GROUP A40: SPECIALIST & CONSULTANT PHYSICIAN — TELEHEALTH ════════
+  // Item 91822 — Specialist video initial attendance
+  { itemNum: "91822", description: "Video attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance was other than a second or subsequent attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 101.30, benefit85: 86.15, category: "1", group: "A40", subgroup: "4", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Initial", "Video"] },
+  // Item 91823 — Specialist video subsequent attendance
+  { itemNum: "91823", description: "Video attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "4", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Video"] },
+  // Item 91824 — Consultant physician video initial attendance
+  { itemNum: "91824", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance was other than a second or subsequent attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 178.70, benefit85: 151.90, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Initial", "Video", "Consultant Physician"] },
+  // Item 92422 — Consultant physician video complex initial (≥2 morbidities, ≥45 min — video equivalent of item 132)
+  { itemNum: "92422", description: "Video attendance by a consultant physician (other than psychiatry) of at least 45 minutes for an initial assessment of a patient with at least 2 morbidities (which may include complex congenital, developmental and behavioural disorders) following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken, differential diagnoses formulated; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Cannot be billed on the same day as items 110, 116, 119, 91824, 91825, 91826 or 91836 by the same physician. Not claimable if item 132 or 92422 applied in the preceding 12 months.", scheduleFee: 312.45, benefit85: 265.60, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min", "Consultant Physician"] },
+  // Item 92423 — Consultant physician video complex review (≥2 morbidities, ≥20 min — video equivalent of item 133)
+  { itemNum: "92423", description: "Video attendance by a consultant physician (other than psychiatry) of at least 20 minutes after the first attendance in a single course of treatment for a review of a patient with at least 2 morbidities, if: a review covering presenting problems, responses to treatment, comprehensive organ system assessment, and revised diagnoses is undertaken; and a modified consultant physician treatment and management plan is provided to the referring practitioner. Requires item 132 or 92422 to have been claimed in the preceding 12 months by the same physician. Maximum twice in any 12-month period.", scheduleFee: 156.45, benefit85: 133.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Video", "Complex", "≥2 Morbidities", "Review", "≥20 min", "Consultant Physician"] },
+  // Item 91825 — Consultant physician video subsequent (not minor)
+  { itemNum: "91825", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is not a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Video", "Consultant Physician"] },
+  // Item 91826 — Consultant physician video subsequent minor
+  { itemNum: "91826", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Video", "Consultant Physician"] },
+  // Item 91833 — Specialist phone subsequent attendance
+  { itemNum: "91833", description: "Phone attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "7", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Phone"] },
+  // Item 92440 — Consultant physician phone subsequent (not minor)
+  { itemNum: "92440", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Phone", "Consultant Physician"] },
+  // Item 91836 — Consultant physician phone subsequent minor
+  { itemNum: "91836", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Phone", "Consultant Physician"] },
+
+  // ══ GROUP A8: CONSULTANT PSYCHIATRIST ATTENDANCES ════════════════════
+  // Item 291 — Psychiatric assessment with management plan (TMAP, >45 min, new referral back to GP)
+  { itemNum: "291", description: "Professional attendance lasting more than 45 minutes at consulting rooms by a consultant psychiatrist, following referral by a GP/NP for assessment or management, if: appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"] },
+  // Item 293 — Review of TMAP (>30 to ≤45 min)
+  { itemNum: "293", description: "Professional attendance lasting more than 30 minutes but not more than 45 minutes at consulting rooms by a consultant psychiatrist, for review of a management plan prepared under item 291 or 92435, following re-referral by the managing practitioner. Requires use of an outcome tool (if appropriate), mental state examination, and review of the comprehensive diagnostic assessment and management plan. Within 2 weeks a revised written report must be provided. Not claimable more than once in preceding 12 months.", scheduleFee: 335.05, benefit85: 284.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "TMAP Review", "30–45 min"] },
+  // Item 296 — Psychiatrist initial attendance at consulting rooms (new patient or >24 months, >45 min)
+  { itemNum: "296", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance at consulting rooms, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92437 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", ">45 min"] },
+  // Item 297 — Psychiatrist initial attendance at hospital (new patient or >24 months, >45 min)
+  { itemNum: "297", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — attendance at hospital, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months.", scheduleFee: 308.30, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", "Hospital", ">45 min"] },
+  // Item 300 — Psychiatrist subsequent ≤15 min (consulting rooms, ≤50 attendances/year)
+  { itemNum: "300", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", "≤50/year"] },
+  // Item 302 — Psychiatrist subsequent >15 to ≤30 min (consulting rooms, ≤50 attendances/year)
+  { itemNum: "302", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", "≤50/year"] },
+  // Item 304 — Psychiatrist subsequent >30 to ≤45 min (consulting rooms, ≤50 attendances/year)
+  { itemNum: "304", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", "≤50/year"] },
+  // Item 306 — Psychiatrist subsequent >45 to ≤75 min (consulting rooms, ≤50 attendances/year)
+  { itemNum: "306", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", "≤50/year", "Standard"] },
+  // Item 308 — Psychiatrist subsequent >75 min (consulting rooms, ≤50 attendances/year)
+  { itemNum: "308", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", "≤50/year", "Extended"] },
+  // Item 319 — Psychiatrist intensive psychotherapy (>45 min, ≤160 attendances/year)
+  { itemNum: "319", description: "Professional attendance by a consultant psychiatrist following referral — attendance lasting more than 45 minutes at consulting rooms, if: the formulation of the patient's clinical presentation indicates intensive psychotherapy is a clinically appropriate and indicated treatment; and that attendance and other specified attendances have not exceeded 160 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Subsequent", "Psychotherapy", ">45 min", "≤160/year"] },
+  // Items 310–318 — Over 50 attendances per year (reduced fees)
+  { itemNum: "310", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 25.55, benefit85: 21.75, benefit75: 19.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", ">50/year", "Reduced"] },
+  { itemNum: "312", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", ">50/year", "Reduced"] },
+  { itemNum: "314", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 79.00, benefit85: 67.15, benefit75: 59.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", ">50/year", "Reduced"] },
+  { itemNum: "316", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 108.85, benefit85: 92.55, benefit75: 81.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", ">50/year", "Reduced"] },
+  { itemNum: "318", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 126.20, benefit85: 107.30, benefit75: 94.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", ">50/year", "Reduced"] },
+  // Hospital attendances
+  { itemNum: "320", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at hospital.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Hospital", "≤15 min"] },
+  { itemNum: "322", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at hospital.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Hospital", "15–30 min"] },
+  { itemNum: "324", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at hospital.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Hospital", "30–45 min"] },
+  { itemNum: "326", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at hospital.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Hospital", "45–75 min"] },
+  { itemNum: "328", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at hospital.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Hospital", ">75 min"] },
+  // Collateral interviews
+  { itemNum: "341", description: "An interview, lasting not more than 15 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year (combined with items 343, 345, 347, 349 etc.).", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Collateral", "Third Party Interview", "≤15 min"] },
+  { itemNum: "343", description: "An interview, lasting more than 15 minutes but not more than 30 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Collateral", "Third Party Interview", "15–30 min"] },
+  // Group psychotherapy
+  { itemNum: "342", description: "Group psychotherapy (including any associated consultations on the same occasion) of not less than 1 hour under the continuous direct supervision of a consultant psychiatrist, involving a group of 2 to 9 unrelated patients or a family group of more than 3 patients — each referred by a referring practitioner — each patient.", scheduleFee: 58.35, benefit85: 49.60, benefit75: 43.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 60, maxDuration: null, tags: ["Group Therapy", "Psychotherapy", "≥1 hour", "Per patient"] },
+
+  // ══ GROUP A40: GP MENTAL HEALTH TREATMENT PLAN — VIDEO (Subgroup A40) ═
+  // Item 92112 — Video MHTP preparation, GP without MH skills training, 20–<40 min
+  { itemNum: "92112", description: "Video attendance, by a general practitioner who has not undertaken mental health skills training (and not including a specialist or consultant physician), of at least 20 minutes but less than 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 83.65, benefit100: 83.65, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: 40, tags: ["Mental Health", "MHTP", "Treatment Plan", "Video", "20–40 min"] },
+  // Item 92113 — Video MHTP preparation, GP without MH skills training, ≥40 min
+  { itemNum: "92113", description: "Video attendance, by a general practitioner who has not undertaken mental health skills training (and not including a specialist or consultant physician), of at least 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 123.15, benefit100: 123.15, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 40, maxDuration: null, tags: ["Mental Health", "MHTP", "Treatment Plan", "Video", "≥40 min"] },
+  // Item 92116 — Video MHTP preparation, GP WITH MH skills training, 20–<40 min
+  { itemNum: "92116", description: "Video attendance, by a general practitioner who has undertaken mental health skills training, of at least 20 minutes but less than 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 106.20, benefit100: 106.20, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: 40, tags: ["Mental Health", "MHTP", "Treatment Plan", "Video", "Trained GP", "20–40 min"] },
+  // Item 92117 — Video MHTP preparation, GP WITH MH skills training, ≥40 min
+  { itemNum: "92117", description: "Video attendance, by a general practitioner who has undertaken mental health skills training, of at least 40 minutes in duration for the preparation of a GP mental health treatment plan for a patient.", scheduleFee: 156.45, benefit100: 156.45, category: "1", group: "A40", subgroup: "1", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 40, maxDuration: null, tags: ["Mental Health", "MHTP", "Treatment Plan", "Video", "Trained GP", "≥40 min"] },
+
+  // ══ GROUP A40: GP FOCUSSED PSYCHOLOGICAL STRATEGIES — VIDEO & PHONE ══
+  // Item 91818 — Video FPS by GP, 30–<40 min
+  { itemNum: "91818", description: "Video attendance by a general practitioner, for the purpose of providing focussed psychological strategies for assessed mental disorders if: (a) the practitioner is registered with the Chief Executive Medicare as meeting the credentialing requirements for provision of this service; and (b) the service lasts at least 30 minutes, but less than 40 minutes.", scheduleFee: 108.20, benefit100: 108.20, category: "1", group: "A40", subgroup: "3", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 30, maxDuration: 40, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "Video", "30–40 min"] },
+  // Item 91819 — Video FPS by GP, ≥40 min
+  { itemNum: "91819", description: "Video attendance by a general practitioner, for the purpose of providing focussed psychological strategies for assessed mental disorders if: (a) the practitioner is registered with the Chief Executive Medicare as meeting the credentialing requirements for provision of this service; and (b) the service lasts at least 40 minutes.", scheduleFee: 154.85, benefit100: 154.85, category: "1", group: "A40", subgroup: "3", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-video", minDuration: 40, maxDuration: null, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "Video", "≥40 min"] },
+  // Item 91842 — Phone FPS by GP, 30–<40 min
+  { itemNum: "91842", description: "Phone attendance by a general practitioner, for the purpose of providing focussed psychological strategies for assessed mental disorders if: (a) the practitioner is registered with the Chief Executive Medicare as meeting the credentialing requirements for provision of this service; and (b) the service lasts at least 30 minutes, but less than 40 minutes.", scheduleFee: 108.20, benefit100: 108.20, category: "1", group: "A40", subgroup: "3", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 30, maxDuration: 40, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "Phone", "30–40 min"] },
+  // Item 91843 — Phone FPS by GP, ≥40 min
+  { itemNum: "91843", description: "Phone attendance by a general practitioner, for the purpose of providing focussed psychological strategies for assessed mental disorders if: (a) the practitioner is registered with the Chief Executive Medicare as meeting the credentialing requirements for provision of this service; and (b) the service lasts at least 40 minutes.", scheduleFee: 154.85, benefit100: 154.85, category: "1", group: "A40", subgroup: "3", specialty: ["gp"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 40, maxDuration: null, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "Phone", "≥40 min"] },
+
+  // ══ GROUP A40: PSYCHIATRIST VIDEO — SUBSEQUENT >50/YEAR REDUCED (Subgroup 6) ═
+  { itemNum: "91868", description: "Video attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 25.55, benefit85: 21.75, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Video", "≤15 min", ">50/year", "Reduced"] },
+  { itemNum: "91869", description: "Video attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Video", "15–30 min", ">50/year", "Reduced"] },
+  { itemNum: "91870", description: "Video attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 79.00, benefit85: 67.15, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Video", "30–45 min", ">50/year", "Reduced"] },
+  { itemNum: "91871", description: "Video attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 108.85, benefit85: 92.55, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Video", "45–75 min", ">50/year", "Reduced"] },
+  { itemNum: "91872", description: "Video attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 126.20, benefit85: 107.30, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Video", ">75 min", ">50/year", "Reduced"] },
+
+  // ══ GROUP A40: PSYCHIATRIST PHONE — SUBSEQUENT >50/YEAR REDUCED (Subgroup 9) ═
+  { itemNum: "91879", description: "Phone attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 25.55, benefit85: 21.75, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Phone", "≤15 min", ">50/year", "Reduced"] },
+  { itemNum: "91880", description: "Phone attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Phone", "15–30 min", ">50/year", "Reduced"] },
+  { itemNum: "91881", description: "Phone attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 79.00, benefit85: 67.15, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Phone", "30–45 min", ">50/year", "Reduced"] },
+
+  // ══ GROUP A40: PSYCHIATRIST VIDEO — INITIAL SERVICES (Subgroup 6) ═══
+  // Item 92435 — Psychiatrist video TMAP (equivalent of item 291 via video)
+  { itemNum: "92435", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral by a GP or NP, if: an appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by the referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in the preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"] },
+  // Item 92437 — Psychiatrist video initial attendance (equivalent of item 296 via video)
+  { itemNum: "92437", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92435 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "New Patient", ">45 min"] },
+
+  // ══ GROUP A40: PSYCHIATRIST VIDEO — SUBSEQUENT SERVICES (Subgroup 6) ═
+  // Item 91827 — Psychiatrist video subsequent ≤15 min (≤50/year)
+  { itemNum: "91827", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Video", "≤15 min", "≤50/year"] },
+  // Item 91828 — Psychiatrist video subsequent >15 to ≤30 min (≤50/year)
+  { itemNum: "91828", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Video", "15–30 min", "≤50/year"] },
+  // Item 91829 — Psychiatrist video subsequent >30 to ≤45 min (≤50/year)
+  { itemNum: "91829", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Video", "30–45 min", "≤50/year"] },
+  // Item 91830 — Psychiatrist video subsequent >45 to ≤75 min (≤50/year)
+  { itemNum: "91830", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 45 minutes but not more than 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Video", "45–75 min", "≤50/year"] },
+  // Item 91831 — Psychiatrist video subsequent >75 min (≤50/year)
+  { itemNum: "91831", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Video", ">75 min", "≤50/year"] },
+
+  // ══ GROUP A40: PSYCHIATRIST PHONE SERVICES (Subgroup 9) ══════════════
+  // Item 91837 — Psychiatrist phone subsequent ≤15 min (≤50/year; after first attendance in single course)
+  { itemNum: "91837", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes. For subsequent attendances only (after the first in a single course of treatment), if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Phone", "≤15 min", "≤50/year"] },
+  // Item 91838 — Psychiatrist phone subsequent >15 to ≤30 min (≤50/year)
+  { itemNum: "91838", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Phone", "15–30 min", "≤50/year"] },
+  // Item 91839 — Psychiatrist phone subsequent >30 to ≤45 min (≤50/year)
+  { itemNum: "91839", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Phone", "30–45 min", "≤50/year"] },
+];
+
+// ─── OPTIMIZATION RULES ──────────────────────────────────────────────
+// Source: MBS Book 1 November 2025
+function optimizeItems(params) {
+  const { specialty, consultType, modality, duration, mentalHealthPlan, mhtpTrained, mhtpType, chronicDisease, healthAssessment, healthAssessmentType, over50Attendances, hospitalSetting } = params;
+  const results = [];
+  const notes = [];
+  const coClaims = []; // Items claimable in addition to the primary recommended item
+
+  // ── GP LOGIC ──────────────────────────────────────────────────────
+  if (specialty === "gp") {
+    // MHTP overrides standard consultation
+    if (mentalHealthPlan) {
+      let mhtpItem;
+      if (mhtpType === "plan") {
+        if (modality === "telehealth-video") {
+          // Video MHTP items (92112/92113 untrained, 92116/92117 trained)
+          if (mhtpTrained) {
+            mhtpItem = duration >= 40
+              ? BUILTIN_ITEMS.find(i => i.itemNum === "92117")
+              : BUILTIN_ITEMS.find(i => i.itemNum === "92116");
+            notes.push("Items 92116/92117: Video MHTP for GP who has undertaken mental health skills training.");
+          } else {
+            mhtpItem = duration >= 40
+              ? BUILTIN_ITEMS.find(i => i.itemNum === "92113")
+              : BUILTIN_ITEMS.find(i => i.itemNum === "92112");
+            notes.push("Items 92112/92113: Video MHTP — no mental health skills training required. Items 92116/92117 available for trained GPs at higher rebate.");
+          }
+        } else if (modality === "telehealth-phone") {
+          notes.push("GP Mental Health Treatment Plan preparation is not available via phone — the minimum 20-minute clinical interaction and written plan requirement is only supported in-person or via video.");
+          mhtpItem = null;
+        } else {
+          // In-person MHTP
+          if (mhtpTrained) {
+            mhtpItem = duration >= 40
+              ? BUILTIN_ITEMS.find(i => i.itemNum === "2717")
+              : BUILTIN_ITEMS.find(i => i.itemNum === "2715");
+            notes.push("Items 2715/2717: GP has undertaken mental health skills training. Higher rebate applies.");
+          } else {
+            mhtpItem = duration >= 40
+              ? BUILTIN_ITEMS.find(i => i.itemNum === "2701")
+              : BUILTIN_ITEMS.find(i => i.itemNum === "2700");
+            notes.push("Items 2700/2701: No formal mental health skills training required. Items 2715/2717 available for trained GPs at higher rebate.");
+          }
+        }
+        if (mhtpItem) {
+          results.push({ ...mhtpItem, reason: "GP Mental Health Treatment Plan" });
+          notes.push("MHTP preparation cannot be billed on the same day as standard Level A–E consultation items.");
+          notes.push("Requires minimum 20 minutes. Includes diagnosis, formulation, treatment plan and referral considerations.");
+        }
+      } else if (mhtpType === "fps") {
+        // Focussed Psychological Strategies — video and phone equivalents exist
+        let fpsItem;
+        if (modality === "telehealth-video") {
+          fpsItem = duration >= 40
+            ? BUILTIN_ITEMS.find(i => i.itemNum === "91819")
+            : BUILTIN_ITEMS.find(i => i.itemNum === "91818");
+          notes.push("Items 91818/91819: Video FPS — GP must be registered with Services Australia as meeting credentialling requirements.");
+        } else if (modality === "telehealth-phone") {
+          fpsItem = duration >= 40
+            ? BUILTIN_ITEMS.find(i => i.itemNum === "91843")
+            : BUILTIN_ITEMS.find(i => i.itemNum === "91842");
+          notes.push("Items 91842/91843: Phone FPS — GP must be registered with Services Australia as meeting credentialling requirements.");
+        } else {
+          fpsItem = duration >= 40
+            ? BUILTIN_ITEMS.find(i => i.itemNum === "2725")
+            : BUILTIN_ITEMS.find(i => i.itemNum === "2721");
+          notes.push("Items 2721/2725: GP must be registered with Services Australia as meeting credentialling requirements for FPS.");
+        }
+        if (fpsItem) {
+          results.push({ ...fpsItem, reason: "Focussed Psychological Strategies" });
+          notes.push("Minimum 30 minutes. The ≥40-minute item applies when the service lasts at least 40 minutes.");
+        }
+      }
+    } else if (chronicDisease) {
+      if (chronicDisease === "gpmp") {
+        const gpmpItem = BUILTIN_ITEMS.find(i => i.itemNum === "965");
+        if (gpmpItem) {
+          results.push({ ...gpmpItem, reason: "GP Chronic Condition Management Plan" });
+          notes.push("Item 965: Cannot be billed with a standard consultation item on the same day.");
+          notes.push("Can be billed together with item 729 (multidisciplinary care plan) on the same day if both are completed.");
+        }
+      } else if (chronicDisease === "review") {
+        const revItem = BUILTIN_ITEMS.find(i => i.itemNum === "967");
+        if (revItem) {
+          results.push({ ...revItem, reason: "Review of GP Chronic Condition Management Plan" });
+          notes.push("Item 967: Reviews the GPMP prepared under item 965 or by an associated medical practitioner.");
+        }
+      } else if (chronicDisease === "mcp") {
+        const mcpItem = BUILTIN_ITEMS.find(i => i.itemNum === "729");
+        if (mcpItem) {
+          results.push({ ...mcpItem, reason: "Contribution to Multidisciplinary Care Plan" });
+          notes.push("Item 729: GP contribution to a multidisciplinary care plan prepared by another provider, or review of such a plan.");
+        }
+      }
+    } else if (healthAssessment && healthAssessmentType) {
+      const haMap = {
+        "brief": "701", "standard": "703", "long": "705", "prolonged": "707", "atsi": "715"
+      };
+      const haItem = BUILTIN_ITEMS.find(i => i.itemNum === haMap[healthAssessmentType]);
+      if (haItem) {
+        results.push({ ...haItem, reason: "Health Assessment" });
+        if (healthAssessmentType === "atsi") {
+          notes.push("Item 715: ATSI health assessment — claimable not more than once in a 9-month period.");
+        } else {
+          notes.push("Health assessment items (701–707) are claimable in addition to standard consultation items, subject to eligibility criteria.");
+        }
+      }
+    } else {
+      // Standard GP consult by modality and duration
+      let itemMap = {};
+      if (modality === "in-person") {
+        itemMap = { 3: "3", 6: "23", 20: "36", 40: "44", 60: "123" };
+      } else if (modality === "telehealth-video") {
+        itemMap = { 0: "91790", 6: "91800", 20: "91801", 40: "91802", 60: "91920" };
+      } else if (modality === "telehealth-phone") {
+        itemMap = { 0: "91890", 6: "91891", 20: "91900", 40: "91910" };
+      }
+
+      // Find highest applicable threshold
+      const thresholds = Object.keys(itemMap).map(Number).sort((a, b) => b - a);
+      let chosenNum = null;
+      for (const t of thresholds) {
+        if (duration >= t) { chosenNum = itemMap[t]; break; }
+      }
+      if (!chosenNum) chosenNum = itemMap[thresholds[thresholds.length - 1]];
+
+      const gpItem = BUILTIN_ITEMS.find(i => i.itemNum === chosenNum);
+      if (gpItem) {
+        results.push({ ...gpItem, reason: "Standard GP attendance" });
+      }
+
+      if (modality === "telehealth-video") {
+        notes.push("Video telehealth (A40 Subgroup 1): Must be performed by the patient's eligible telehealth practitioner. Exemptions apply — see AN.1.1.");
+      } else if (modality === "telehealth-phone") {
+        notes.push("Phone telehealth items 91900 and 91910 require the patient to be registered under MyMedicare with the billing practice.");
+        notes.push("Items 91890/91891 are available without MyMedicare registration for Level A and B phone attendances.");
+      }
+    }
+  }
+
+  // ── PSYCHIATRIST LOGIC ────────────────────────────────────────────
+  else if (specialty === "psychiatrist") {
+    let baseItem = null;
+
+    // Collateral interview — interview of third party (patient NOT present)
+    if (consultType === "collateral") {
+      const collateralItem = duration >= 15
+        ? BUILTIN_ITEMS.find(i => i.itemNum === "343")
+        : BUILTIN_ITEMS.find(i => i.itemNum === "341");
+      if (collateralItem) results.push({ ...collateralItem, reason: "Collateral interview (third party, patient not present)" });
+      notes.push("Items 341/343: Interview of a person other than the patient (e.g. family member, carer), when the patient is NOT in attendance. Purpose must be initial diagnostic evaluation or continuing management of the patient.");
+      notes.push("Annual cap: maximum 15 services per calendar year combined across items 341, 343, 345, 347, 349.");
+      return { results, notes };
+    }
+
+    if (modality === "in-person") {
+      if (consultType === "initial") {
+        // 291 = TMAP to GP (special), 296 = new patient at rooms, 297 = hospital
+        if (params.tmapToGP) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "291");
+          notes.push("Item 291 (TMAP): Requires a comprehensive diagnostic assessment, a 12-month management plan sent to the referring GP within 2 weeks, and a clinical decision that ongoing GP management is appropriate. Not claimable more than once per 12 months.");
+        } else if (hospitalSetting) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "297");
+          notes.push("Item 297: Initial attendance at hospital. Patient must be new or not seen by this psychiatrist in preceding 24 months.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "296");
+          notes.push("Item 296: Initial attendance at consulting rooms. Patient must be new or not seen by this psychiatrist in preceding 24 months.");
+        }
+      } else {
+        // Subsequent — hospital vs rooms, >50/year threshold
+        const isHospital = hospitalSetting;
+        const isHighFreq = over50Attendances;
+
+        if (isHospital) {
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "320");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "322");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "324");
+          else if (duration < 75) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "326");
+          else baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "328");
+          notes.push("Hospital items 320–328: All are claimable following referral by a referring practitioner.");
+        } else if (isHighFreq) {
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "310");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "312");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "314");
+          else if (duration < 75) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "316");
+          else baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "318");
+          notes.push("Items 310–318 (>50 attendances/year): Reduced schedule fees apply once the patient exceeds 50 combined psychiatrist attendances in a calendar year.");
+        } else {
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "300");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "302");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "304");
+          else if (duration < 75) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "306");
+          else baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "308");
+          notes.push("Items 300–308: Applicable while the patient has not exceeded 50 combined psychiatrist attendances in a calendar year.");
+        }
+        if (params.psychotherapy && duration > 45 && !isHighFreq && !isHospital) {
+          const psychoItem = BUILTIN_ITEMS.find(i => i.itemNum === "319");
+          if (psychoItem) {
+            notes.push("Item 319 (Intensive Psychotherapy): May be claimable instead of 306 if the formulation indicates intensive psychotherapy is clinically appropriate and indicated. Cap of 160 attendances/year.");
+          }
+        }
+      }
+    } else if (modality === "telehealth-video") {
+      if (consultType === "subsequent") {
+        const isHighFreq = over50Attendances;
+        if (!isHighFreq) {
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91827");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91828");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91829");
+          else if (duration < 75) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91830");
+          else baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91831");
+          notes.push("Items 91827–91831: Video attendances for consultant psychiatrist. Subject to the same 50-attendance/year cap as in-person items.");
+        } else {
+          // >50/year reduced rate video items 91868–91872
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91868");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91869");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91870");
+          else if (duration < 75) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91871");
+          else baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91872");
+          notes.push("Items 91868–91872: Reduced-rate video items apply once the patient exceeds 50 combined psychiatrist attendances in a calendar year.");
+        }
+      } else if (consultType === "initial") {
+        // 92435 = video TMAP (equivalent of 291), 92437 = video standard initial (equivalent of 296)
+        if (params.tmapToGP) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "92435");
+          notes.push("Item 92435 (Video TMAP): Video equivalent of item 291. Requires comprehensive diagnostic assessment and a 12-month management plan sent to the referring GP within 2 weeks. Not claimable more than once in the preceding 12 months.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "92437");
+          notes.push("Item 92437: Video initial attendance. Patient must be new or not seen by this psychiatrist in the preceding 24 months. Attendance must exceed 45 minutes.");
+          notes.push("Hospital setting does not apply to telehealth initial items — use item 297 for hospital initial attendances.");
+        }
+      }
+    } else if (modality === "telehealth-phone") {
+      if (consultType === "subsequent") {
+        if (over50Attendances) {
+          // >50/year reduced rate phone items 91879–91881
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91879");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91880");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91881");
+          else notes.push("Phone attendances >45 min exceed the available reduced-rate phone items. Consider video (91872) or in-person (318).");
+          notes.push("Items 91879–91881: Reduced-rate phone items apply once the patient exceeds 50 combined psychiatrist attendances in a calendar year.");
+        } else {
+          if (duration < 15) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91837");
+          else if (duration < 30) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91838");
+          else if (duration < 45) baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91839");
+          else notes.push("Phone attendances >45 min for psychiatrists — no standard MBS phone item currently exists beyond 45 minutes. Consider video or in-person.");
+          notes.push("Items 91837–91839: Phone attendances only available for subsequent attendances (after the first in a single course of treatment).");
+        }
+      }
+    }
+
+    if (baseItem) results.push({ ...baseItem, reason: "Psychiatrist consultation" });
+  }
+
+  // ── SPECIALIST/CONSULTANT PHYSICIAN LOGIC ─────────────────────────
+  else if (specialty === "specialist") {
+    let baseItem = null;
+
+    if (modality === "in-person") {
+      if (consultType === "initial") {
+        if (params.complexMultiMorbidity && duration >= 45) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "132");
+          notes.push("Item 132: Requires at least 2 morbidities, comprehensive history including psychosocial and medication review, multi-system assessment, and a management plan of significant complexity provided to the referring practitioner. Not claimable more than once in preceding 12 months by same physician.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "110");
+          notes.push("Item 110: Consultant physician initial attendance at consulting rooms or hospital following referral.");
+        }
+      } else {
+        if (params.complexMultiMorbidity && params.reviewManagementPlan && duration >= 20) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "133");
+          notes.push("Item 133: Review for patient with ≥2 morbidities after item 132 was claimed in preceding 12 months. Maximum twice per 12 months.");
+        } else if (params.minorAttendance) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "119");
+          notes.push("Item 119: Minor subsequent attendance — brief review not warranting a full consultation.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "116");
+          notes.push("Item 116: Standard subsequent attendance at consulting rooms or hospital following referral.");
+        }
+      }
+    } else if (modality === "telehealth-video") {
+      if (consultType === "initial") {
+        if (params.complexMultiMorbidity && duration >= 45) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "92422");
+          notes.push("Item 92422: Video equivalent of item 132. Requires ≥2 morbidities, ≥45 min, comprehensive history + psychosocial history + medication review, multi-system assessment, and a management plan of significant complexity provided to the referring practitioner. Not claimable if item 132 or 92422 applied in preceding 12 months by same physician.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91824");
+          notes.push("Item 91824: Video initial attendance for consultant physician (other than psychiatry). More than 5 minutes in duration.");
+        }
+      } else {
+        if (params.complexMultiMorbidity && params.reviewManagementPlan && duration >= 20) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "92423");
+          notes.push("Item 92423: Video equivalent of item 133. Review for patient with ≥2 morbidities after item 132 or 92422 was claimed in preceding 12 months by same physician. Minimum 20 minutes. Maximum twice per 12 months.");
+        } else if (params.minorAttendance) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91826");
+          notes.push("Item 91826: Minor video subsequent attendance.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91825");
+          notes.push("Item 91825: Standard video subsequent attendance for consultant physician.");
+        }
+      }
+    } else if (modality === "telehealth-phone") {
+      if (consultType === "subsequent") {
+        if (params.minorAttendance) {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "91836");
+          notes.push("Item 91836: Minor phone subsequent attendance for consultant physician.");
+        } else {
+          baseItem = BUILTIN_ITEMS.find(i => i.itemNum === "92440");
+          notes.push("Item 92440: Standard phone subsequent attendance for consultant physician (other than psychiatry).");
+        }
+      } else {
+        notes.push("Phone initial attendances for consultant physicians — no specific MBS item. Consider video or in-person for initial consultations.");
+      }
+    }
+
+    if (baseItem) results.push({ ...baseItem, reason: "Specialist/consultant physician attendance" });
+    notes.push("Specialist items: Benefit is 85% of schedule fee (in-hospital or out-of-hospital). 75% benefit applies in some out-of-hospital scenarios.");
+  }
+
+  // ── GENERAL TELEHEALTH NOTES ──────────────────────────────────────
+  if (modality !== "in-person" && specialty !== "gp") {
+    notes.push("Telehealth attendances require the patient's informed consent and must be clinically appropriate. Patients should generally have an established treating relationship with the provider.");
+  }
+
+  if (results.length === 0) {
+    notes.push("No matching item found for these parameters. Try adjusting your selections or refer directly to the MBS.");
+  }
+
+  // ── CO-CLAIMABLE ITEMS ────────────────────────────────────────────
+  // Items that may be legitimately billed in the SAME appointment in addition
+  // to the primary recommended item, subject to meeting each item's requirements.
+
+  if (specialty === "gp") {
+    // GPMP (965) ↔ MCP contribution (729): explicitly co-claimable on the same day
+    if (chronicDisease === "gpmp" || chronicDisease === "review") {
+      const mcp = BUILTIN_ITEMS.find(i => i.itemNum === "729");
+      if (mcp) coClaims.push({
+        ...mcp,
+        coClaimNote: "Item 729 may be claimed on the same day if the GP is also contributing to a multidisciplinary care plan prepared by another provider (e.g. a hospital or specialist team plan).",
+        reason: "Multidisciplinary Care Plan contribution (co-claimable with GPMP)"
+      });
+    }
+    if (chronicDisease === "mcp") {
+      // If billing MCP contribution, GPMP can be co-claimed if also preparing one
+      const gpmp = BUILTIN_ITEMS.find(i => i.itemNum === "965");
+      if (gpmp) coClaims.push({
+        ...gpmp,
+        coClaimNote: "Item 965 may be claimed on the same day if the GP is also preparing a GP Chronic Condition Management Plan for the same patient.",
+        reason: "GP Chronic Condition Management Plan (co-claimable with MCP contribution)"
+      });
+    }
+    // Health assessment (701–707/715) can be co-claimed with a chronic disease management item
+    if (chronicDisease === "gpmp" || chronicDisease === "review" || chronicDisease === "mcp") {
+      notes.push("A health assessment item (701–707, 715) may be claimed on the same day as a chronic disease management item if all clinical requirements for both items are independently met.");
+    }
+  }
+
+  if (specialty === "psychiatrist") {
+    // Collateral interviews can be claimed on the same day as any standard attendance
+    // (patient must be seen separately — patient is NOT present during the collateral interview)
+    if (consultType !== "collateral") {
+      const c341 = BUILTIN_ITEMS.find(i => i.itemNum === "341");
+      const c343 = BUILTIN_ITEMS.find(i => i.itemNum === "343");
+      if (c341) coClaims.push({
+        ...c341,
+        coClaimNote: "Item 341 may be claimed on the same day if a family member, carer, or other third party is also interviewed separately (≤15 min, patient NOT present during that interview).",
+        reason: "Collateral interview ≤15 min — third party (patient not present)"
+      });
+      if (c343) coClaims.push({
+        ...c343,
+        coClaimNote: "Item 343 may be claimed instead of 341 if the collateral interview exceeds 15 minutes (>15 to ≤30 min).",
+        reason: "Collateral interview >15 min — third party (patient not present)"
+      });
+      // Group psychotherapy is an additional item if running a group session
+      const g342 = BUILTIN_ITEMS.find(i => i.itemNum === "342");
+      if (g342 && consultType === "subsequent" && modality === "in-person") {
+        coClaims.push({
+          ...g342,
+          coClaimNote: "Item 342 applies per patient if the psychiatrist conducts a group psychotherapy session (2–9 unrelated patients, ≥1 hour, continuous direct supervision). Billed per patient, not per session.",
+          reason: "Group psychotherapy — per patient (if also running a group session)"
+        });
+      }
+    }
+  }
+
+  return { results, notes, coClaims };
+}
+
+// ─── XML PARSER ──────────────────────────────────────────────────────
+function parseMBSXml(xmlText) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlText, "text/xml");
+  const items = [];
+
+  // Try multiple known structures
+  const itemNodes = doc.querySelectorAll("Item") || [];
+
+  itemNodes.forEach(node => {
+    const get = (tag) => {
+      const el = node.querySelector(tag);
+      return el ? el.textContent.trim() : "";
+    };
+
+    // Try various possible tag names
+    const itemNum = get("ItemNum") || get("Item_Num") || get("ItemNumber") || get("MBSItemNo");
+    const description = get("Description") || get("ItemDescription") || get("Descriptor") || get("Desc");
+    const feeStr = get("ScheduleFee") || get("Schedule_Fee") || get("Fee") || get("SchFee");
+    const scheduleFee = parseFloat(feeStr) || 0;
+    const category = get("Category") || get("CategoryID") || get("Cat");
+    const group = get("Group") || get("GroupID") || get("Grp");
+    const subgroup = get("SubGroup") || get("SubGroupID") || get("SubGrp");
+    const benefitType = get("BenefitType") || get("Benefit_Type");
+    const feeType = get("FeeType") || get("Fee_Type");
+    const newItem = get("NewItem");
+    const itemStart = get("ItemStart") || get("Item_Start");
+    const itemEnd = get("ItemEnd") || get("Item_End");
+
+    if (itemNum) {
+      items.push({
+        itemNum,
+        description: description || "(No description)",
+        scheduleFee,
+        category,
+        group,
+        subgroup,
+        benefitType,
+        feeType,
+        newItem,
+        itemStart,
+        itemEnd,
+        specialty: [],
+        consultType: "",
+        modality: "",
+        tags: [],
+        fromXml: true
+      });
+    }
+  });
+
+  return items;
+}
+
+
+// ─── COMPONENTS ──────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState("optimize");
+  const [xmlItems, setXmlItems] = useState(null);
+  const [xmlFileName, setXmlFileName] = useState(null);
+  const fileRef = useRef();
+
+  const allItems = useMemo(() => {
+    if (xmlItems && xmlItems.length > 0) return xmlItems;
+    return BUILTIN_ITEMS;
+  }, [xmlItems]);
+
+  const handleXmlLoad = useCallback((e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setXmlFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const parsed = parseMBSXml(ev.target.result);
+      if (parsed.length > 0) {
+        setXmlItems(parsed);
+      } else {
+        alert("Could not parse any items from the XML file. The file format may not be recognized. The app will continue using built-in data.");
+      }
+    };
+    reader.readAsText(file);
+  }, []);
+
+  return (
+    <div>
+      <header className="app-header">
+        <div>
+          <h1>MBS Billing Optimizer</h1>
+          <div className="subtitle">
+            Medicare Benefits Schedule — Quick Reference
+            {xmlFileName ? (
+              <span className="data-badge loaded">XML: {xmlFileName}</span>
+            ) : (
+              <span className="data-badge builtin">Nov 2025 MBS — verify before billing</span>
+            )}
+          </div>
+        </div>
+        <div>
+          <input type="file" ref={fileRef} accept=".xml,.XML" style={{display:'none'}} onChange={handleXmlLoad} />
+          <button className="reset-btn" onClick={() => fileRef.current.click()}>
+            Load MBS XML
+          </button>
+        </div>
+      </header>
+
+      <div className="tab-bar">
+        <div className={`tab ${tab === 'optimize' ? 'active' : ''}`} onClick={() => setTab('optimize')}>
+          Optimizer
+        </div>
+        <div className={`tab ${tab === 'browse' ? 'active' : ''}`} onClick={() => setTab('browse')}>
+          Browse &amp; Search
+        </div>
+      </div>
+
+      <div className="container">
+        {tab === 'optimize' ? (
+          <OptimizerTab items={allItems} />
+        ) : (
+          <BrowseTab items={allItems} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function OptimizerTab({ items }) {
+  const [specialty, setSpecialty] = useState("");
+  const [consultType, setConsultType] = useState("");
+  const [modality, setModality] = useState("");
+  const [duration, setDuration] = useState(null);
+  // GP-specific
+  const [gpMode, setGpMode] = useState(""); // "standard" | "mhtp" | "chronic" | "health"
+  const [mhtpType, setMhtpType] = useState("plan"); // "plan" | "fps"
+  const [mhtpTrained, setMhtpTrained] = useState(false);
+  const [chronicDisease, setChronicDisease] = useState("gpmp"); // "gpmp" | "review" | "mcp"
+  const [healthAssessmentType, setHealthAssessmentType] = useState("standard");
+  // Psychiatrist-specific
+  const [hospitalSetting, setHospitalSetting] = useState(false);
+  const [tmapToGP, setTmapToGP] = useState(false);
+  const [over50Attendances, setOver50Attendances] = useState(false);
+  const [psychotherapy, setPsychotherapy] = useState(false);
+  // Specialist-specific
+  const [complexMultiMorbidity, setComplexMultiMorbidity] = useState(false);
+  const [reviewManagementPlan, setReviewManagementPlan] = useState(false);
+  const [minorAttendance, setMinorAttendance] = useState(false);
+  // Reference panel
+  const [refSelectedItem, setRefSelectedItem] = useState(null);
+
+  const isCollateral = specialty === "psychiatrist" && consultType === "collateral";
+
+  const results = useMemo(() => {
+    if (!specialty) return null;
+    if (!isCollateral && !modality) return null;
+    const needsDuration = !(gpMode === "chronic" || gpMode === "health");
+    if (needsDuration && duration === null) return null;
+    const ct = specialty === "gp" ? "subsequent" : consultType;
+    if (specialty !== "gp" && !ct) return null;
+    return optimizeItems({
+      specialty, consultType: ct,
+      modality: isCollateral ? "in-person" : modality,
+      duration,
+      mentalHealthPlan: gpMode === "mhtp",
+      mhtpType, mhtpTrained,
+      chronicDisease: gpMode === "chronic" ? chronicDisease : "",
+      healthAssessment: gpMode === "health",
+      healthAssessmentType,
+      hospitalSetting,
+      tmapToGP,
+      over50Attendances,
+      psychotherapy,
+      complexMultiMorbidity,
+      reviewManagementPlan,
+      minorAttendance,
+    });
+  }, [specialty, consultType, modality, duration, gpMode, mhtpType, mhtpTrained, chronicDisease, healthAssessmentType, hospitalSetting, tmapToGP, over50Attendances, psychotherapy, complexMultiMorbidity, reviewManagementPlan, minorAttendance, isCollateral]);
+
+  const totalFee = results ? results.results.reduce((sum, r) => sum + r.scheduleFee, 0) : 0;
+
+  const reset = () => {
+    setSpecialty(""); setConsultType(""); setModality(""); setDuration(null);
+    setGpMode(""); setMhtpType("plan"); setMhtpTrained(false);
+    setChronicDisease("gpmp"); setHealthAssessmentType("standard");
+    setHospitalSetting(false); setTmapToGP(false); setOver50Attendances(false); setPsychotherapy(false);
+    setComplexMultiMorbidity(false); setReviewManagementPlan(false); setMinorAttendance(false);
+  };
+
+  // Items for the reference side panel — filtered to selected specialty
+  const refItems = useMemo(() => {
+    if (!specialty) return [];
+    return BUILTIN_ITEMS.filter(i => i.specialty && i.specialty.includes(specialty));
+  }, [specialty]);
+
+  // Descriptive text for each GP mode
+  const gpModeInfo = {
+    standard: "Standard attendance items (Level A–E): billed based on duration of consultation. Covers items 3, 23, 36, 44, 123 in-person, and video/phone equivalents (91790–91920, 91890–91910). The eligible telehealth practitioner rule applies for video and phone items.",
+    mhtp: "GP Mental Health Treatment Plan (MHTP): preparation of a written treatment plan for a patient with an assessed mental disorder. Items 2700/2701 for all GPs; items 2715/2717 for GPs who have completed mental health skills training (higher rebate). Minimum 20 minutes. Focussed Psychological Strategies (FPS, items 2721/2725) require credentialling with Services Australia — minimum 30 minutes.",
+    chronic: "Chronic Condition Management: item 965 to prepare a GP Chronic Condition Management Plan (GPMP), item 967 to review an existing GPMP, or item 729 to contribute to a multidisciplinary care plan prepared by another provider. These items generally cannot be billed with a same-day standard consultation item.",
+    health: "Health Assessment: a comprehensive, structured clinical assessment for eligible patients. Items 701–707 are once-yearly and vary by duration. Item 715 is specific to Aboriginal and Torres Strait Islander patients and may be claimed not more than once every 9 months.",
+  };
+
+  const specialtyLabel = { gp: "GP", psychiatrist: "Psychiatrist", specialist: "Specialist / Consultant Physician" };
+
+  return (
+    <div>
+      <div className={specialty ? "optimizer-grid" : ""}>
+
+        {/* ── MAIN DECISION TREE ── */}
+        <div>
+
+          {/* STEP 1: Specialty */}
+          <div className="card">
+            <h2>1. Specialty</h2>
+            <div className="btn-row">
+              {[["gp","GP"],["psychiatrist","Psychiatrist"],["specialist","Specialist (Consultant Physician)"]].map(([val,label]) => (
+                <button key={val} className={`btn ${specialty === val ? 'selected' : ''}`}
+                  onClick={() => { setSpecialty(val); setConsultType(""); setDuration(null); setGpMode(""); setRefSelectedItem(null); }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* STEP 2a: GP Mode */}
+          {specialty === "gp" && (
+            <div className="card">
+              <h2>2. What are you doing?</h2>
+              <div className="btn-row">
+                {[
+                  ["standard","Standard Consult"],
+                  ["mhtp","Mental Health"],
+                  ["chronic","Chronic Disease"],
+                  ["health","Health Assessment"],
+                ].map(([val,label]) => (
+                  <button key={val} className={`btn ${gpMode === val ? 'selected' : ''}`}
+                    onClick={() => { setGpMode(val); setDuration(null); setModality(""); }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mode description */}
+              {gpMode && gpModeInfo[gpMode] && (
+                <div className="mode-info">{gpModeInfo[gpMode]}</div>
+              )}
+
+              {/* MHTP sub-options */}
+              {gpMode === "mhtp" && (
+                <div style={{marginTop:12}}>
+                  <div className="toggle-row">
+                    <div className="toggle-label" style={{fontWeight:500}}>Type</div>
+                    <div style={{display:'flex',gap:'6px'}}>
+                      {[["plan","Treatment Plan"],["fps","Focussed Psych Strategies"]].map(([val,label]) => (
+                        <button key={val} className={`btn ${mhtpType === val ? 'selected' : ''}`}
+                          onClick={() => setMhtpType(val)} style={{fontSize:'12px',padding:'4px 12px'}}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {mhtpType === "plan" && (
+                    <div className="toggle-row">
+                      <div className="toggle-label">
+                        GP has mental health skills training?
+                        <div className="toggle-hint">Unlocks items 2715/2717 at higher rebate</div>
+                      </div>
+                      <div className={`toggle ${mhtpTrained ? 'on' : ''}`} onClick={() => setMhtpTrained(!mhtpTrained)} />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Chronic sub-options */}
+              {gpMode === "chronic" && (
+                <div style={{marginTop:12}} className="btn-row">
+                  {[["gpmp","Prepare GPMP (965)"],["review","Review GPMP (967)"],["mcp","MCP Contribution (729)"]].map(([val,label]) => (
+                    <button key={val} className={`btn ${chronicDisease === val ? 'selected' : ''}`}
+                      onClick={() => setChronicDisease(val)} style={{fontSize:'12px'}}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Health assessment sub-options */}
+              {gpMode === "health" && (
+                <div style={{marginTop:12}} className="btn-row">
+                  {[
+                    ["brief","Brief ≤30 min (701)"],
+                    ["standard","Standard 30–45 min (703)"],
+                    ["long","Long 45–60 min (705)"],
+                    ["prolonged","Prolonged ≥60 min (707)"],
+                    ["atsi","ATSI (715)"],
+                  ].map(([val,label]) => (
+                    <button key={val} className={`btn ${healthAssessmentType === val ? 'selected' : ''}`}
+                      onClick={() => setHealthAssessmentType(val)} style={{fontSize:'12px'}}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* STEP 2b: Consult Type (non-GP) */}
+          {specialty && specialty !== "gp" && (
+            <div className="card">
+              <h2>2. Consultation Type</h2>
+              <div className="btn-row">
+                <button className={`btn ${consultType === 'initial' ? 'selected' : ''}`}
+                  onClick={() => { setConsultType("initial"); setDuration(null); setModality(""); }}>
+                  Initial (New Referral / New Patient)
+                </button>
+                <button className={`btn ${consultType === 'subsequent' ? 'selected' : ''}`}
+                  onClick={() => { setConsultType("subsequent"); setDuration(null); setModality(""); }}>
+                  Subsequent (Follow-up)
+                </button>
+                {specialty === "psychiatrist" && (
+                  <button className={`btn ${consultType === 'collateral' ? 'selected' : ''}`}
+                    onClick={() => { setConsultType("collateral"); setDuration(null); setModality(""); }}>
+                    Collateral Interview
+                  </button>
+                )}
+              </div>
+
+              {/* Collateral interview description */}
+              {specialty === "psychiatrist" && consultType === "collateral" && (
+                <div className="mode-info">
+                  Interview of a person other than the patient (e.g. family member, carer) when the patient is <strong>not in attendance</strong>, for the purposes of initial diagnostic evaluation or continuing management. Item 341 (≤15 min) or item 343 (&gt;15 to ≤30 min). Maximum 15 services per calendar year combined with related items.
+                </div>
+              )}
+
+              {/* Psychiatrist: initial type flags */}
+              {specialty === "psychiatrist" && consultType === "initial" && (
+                <div style={{marginTop:12}}>
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      TMAP consult (back to GP)
+                      <div className="toggle-hint">Item 291: Comprehensive assessment + 12-month management plan returned to GP within 2 weeks</div>
+                    </div>
+                    <div className={`toggle ${tmapToGP ? 'on' : ''}`} onClick={() => setTmapToGP(!tmapToGP)} />
+                  </div>
+                  {!tmapToGP && (
+                    <div className="toggle-row">
+                      <div className="toggle-label">
+                        Hospital setting?
+                        <div className="toggle-hint">Item 297 (hospital) vs 296 (consulting rooms)</div>
+                      </div>
+                      <div className={`toggle ${hospitalSetting ? 'on' : ''}`} onClick={() => setHospitalSetting(!hospitalSetting)} />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Psychiatrist: subsequent flags */}
+              {specialty === "psychiatrist" && consultType === "subsequent" && (
+                <div style={{marginTop:12}}>
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      Hospital setting?
+                      <div className="toggle-hint">Items 320–328 (hospital) vs 300–308 (consulting rooms)</div>
+                    </div>
+                    <div className={`toggle ${hospitalSetting ? 'on' : ''}`} onClick={() => { setHospitalSetting(!hospitalSetting); if (!hospitalSetting) setOver50Attendances(false); }} />
+                  </div>
+                  {!hospitalSetting && (
+                    <>
+                      <div className="toggle-row">
+                        <div className="toggle-label">
+                          Patient has exceeded 50 psychiatrist attendances this calendar year?
+                          <div className="toggle-hint">Switches to reduced-rate items 310–318</div>
+                        </div>
+                        <div className={`toggle ${over50Attendances ? 'on' : ''}`} onClick={() => setOver50Attendances(!over50Attendances)} />
+                      </div>
+                      <div className="toggle-row">
+                        <div className="toggle-label">
+                          Intensive psychotherapy indicated?
+                          <div className="toggle-hint">Item 319 may apply if &gt;45 min and within 160/year</div>
+                        </div>
+                        <div className={`toggle ${psychotherapy ? 'on' : ''}`} onClick={() => setPsychotherapy(!psychotherapy)} />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Specialist: complexity flags */}
+              {specialty === "specialist" && consultType === "initial" && (
+                <div style={{marginTop:12}}>
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      Complex multi-morbidity? (≥2 conditions, ≥45 min, management plan)
+                      <div className="toggle-hint">May qualify for item 132 at higher rebate ($312.45)</div>
+                    </div>
+                    <div className={`toggle ${complexMultiMorbidity ? 'on' : ''}`} onClick={() => setComplexMultiMorbidity(!complexMultiMorbidity)} />
+                  </div>
+                </div>
+              )}
+              {specialty === "specialist" && consultType === "subsequent" && (
+                <div style={{marginTop:12}}>
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      Reviewing a complex management plan? (item 132 previously claimed)
+                      <div className="toggle-hint">May qualify for item 133 if ≥20 min and ≥2 morbidities</div>
+                    </div>
+                    <div className={`toggle ${reviewManagementPlan ? 'on' : ''}`} onClick={() => { setReviewManagementPlan(!reviewManagementPlan); setComplexMultiMorbidity(true); }} />
+                  </div>
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      Minor attendance?
+                      <div className="toggle-hint">Brief review not warranting a full consultation — item 119/91826/91836</div>
+                    </div>
+                    <div className={`toggle ${minorAttendance ? 'on' : ''}`} onClick={() => setMinorAttendance(!minorAttendance)} />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* STEP 3: Modality — skip for collateral interviews */}
+          {specialty && (specialty === "gp" ? gpMode : consultType) && !isCollateral && (
+            <div className="card">
+              <h2>3. Modality</h2>
+              <div className="btn-row">
+                <button className={`btn ${modality === 'in-person' ? 'selected' : ''}`}
+                  onClick={() => setModality("in-person")}>
+                  In Person
+                </button>
+                {gpMode !== "chronic" && gpMode !== "health" && (
+                  <>
+                    <button className={`btn ${modality === 'telehealth-video' ? 'selected' : ''}`}
+                      onClick={() => setModality("telehealth-video")}>
+                      Video
+                    </button>
+                    <button className={`btn ${modality === 'telehealth-phone' ? 'selected' : ''}`}
+                      onClick={() => setModality("telehealth-phone")}>
+                      Phone
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4 (or 3 for collateral): Duration */}
+          {((specialty && modality && (specialty === "gp" ? gpMode : consultType) && !(gpMode === "chronic" || gpMode === "health")) || isCollateral) && (
+            <div className="card">
+              <h2>{isCollateral ? "3" : "4"}. Duration</h2>
+              <div className="btn-row duration-btns">
+                {specialty === "gp" && (
+                  <>
+                    <button className={`btn ${duration === 3 ? 'selected' : ''}`} onClick={() => setDuration(3)}>Brief (&lt;6 min)</button>
+                    <button className={`btn ${duration === 12 ? 'selected' : ''}`} onClick={() => setDuration(12)}>6–19 min</button>
+                    <button className={`btn ${duration === 25 ? 'selected' : ''}`} onClick={() => setDuration(25)}>20–39 min</button>
+                    <button className={`btn ${duration === 45 ? 'selected' : ''}`} onClick={() => setDuration(45)}>40–59 min</button>
+                    <button className={`btn ${duration === 65 ? 'selected' : ''}`} onClick={() => setDuration(65)}>≥60 min</button>
+                  </>
+                )}
+                {specialty === "psychiatrist" && !isCollateral && (
+                  <>
+                    <button className={`btn ${duration === 10 ? 'selected' : ''}`} onClick={() => setDuration(10)}>&lt;15 min</button>
+                    <button className={`btn ${duration === 20 ? 'selected' : ''}`} onClick={() => setDuration(20)}>15–29 min</button>
+                    <button className={`btn ${duration === 35 ? 'selected' : ''}`} onClick={() => setDuration(35)}>30–44 min</button>
+                    <button className={`btn ${duration === 55 ? 'selected' : ''}`} onClick={() => setDuration(55)}>45–74 min</button>
+                    <button className={`btn ${duration === 80 ? 'selected' : ''}`} onClick={() => setDuration(80)}>≥75 min</button>
+                  </>
+                )}
+                {isCollateral && (
+                  <>
+                    <button className={`btn ${duration === 10 ? 'selected' : ''}`} onClick={() => setDuration(10)}>≤15 min → Item 341</button>
+                    <button className={`btn ${duration === 20 ? 'selected' : ''}`} onClick={() => setDuration(20)}>15–30 min → Item 343</button>
+                  </>
+                )}
+                {specialty === "specialist" && (
+                  <>
+                    <button className={`btn ${duration === 10 ? 'selected' : ''}`} onClick={() => setDuration(10)}>Any duration</button>
+                    <button className={`btn ${duration === 25 ? 'selected' : ''}`} onClick={() => setDuration(25)}>≥20 min (review)</button>
+                    <button className={`btn ${duration === 50 ? 'selected' : ''}`} onClick={() => setDuration(50)}>≥45 min (complex)</button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {results && results.results.length > 0 && (
+            <div className="card result-card">
+              <h2>Recommended Items</h2>
+              {results.results.map((item, i) => (
+                <div className="result-item" key={i}>
+                  <div className="item-num">{item.itemNum}</div>
+                  <div className="item-desc">
+                    <div style={{fontWeight:500,marginBottom:2}}>{item.reason}</div>
+                    <div style={{color:'var(--text-secondary)'}}>{item.description}</div>
+                  </div>
+                  <div className="item-fee">${item.scheduleFee.toFixed(2)}</div>
+                </div>
+              ))}
+              <div className="total-row">
+                <span>Total Schedule Fee</span>
+                <span style={{color:'var(--success)'}}>${totalFee.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+
+          {results && results.coClaims && results.coClaims.length > 0 && (
+            <div className="card coclaim-card">
+              <h2>Also Claimable This Appointment</h2>
+              <div className="coclaim-intro">
+                The following items may be billed <strong>in addition</strong> to the recommended item above,
+                provided the clinical requirements for each are independently met:
+              </div>
+              {results.coClaims.map((item, i) => (
+                <div className="coclaim-item" key={i}>
+                  <div className="item-num" style={{color:'var(--warn)'}}>{item.itemNum}</div>
+                  <div className="item-desc">
+                    <div style={{fontWeight:500,marginBottom:2,fontSize:13}}>{item.reason}</div>
+                    <div style={{color:'var(--text-secondary)',fontSize:12}}>{item.description.length > 120 ? item.description.slice(0,120)+'…' : item.description}</div>
+                    {item.coClaimNote && <div className="coclaim-note">{item.coClaimNote}</div>}
+                  </div>
+                  <div className="item-fee" style={{color:'var(--warn)'}}>${item.scheduleFee.toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {results && results.notes.length > 0 && (
+            <div className="warn-box">
+              <strong>Notes:</strong>
+              <ul style={{margin:'8px 0 0 16px',fontSize:'13px'}}>
+                {results.notes.map((note, i) => <li key={i} style={{marginBottom:4}}>{note}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {specialty && (
+            <div style={{textAlign:'center',marginTop:16}}>
+              <button className="btn" onClick={reset} style={{color:'var(--danger)',borderColor:'var(--danger)'}}>
+                Reset All
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── REFERENCE SIDE PANEL ── */}
+        {specialty && (
+          <div className="ref-panel">
+            <div className="ref-panel-header">
+              {specialtyLabel[specialty]} — Item Reference
+            </div>
+            <div className="ref-panel-body">
+              {refItems.map((item, i) => (
+                <div key={i} className="ref-panel-item" onClick={() => setRefSelectedItem(item)}>
+                  <div className="rpi-num">{item.itemNum}</div>
+                  <div className="rpi-desc">
+                    {item.description.length > 65 ? item.description.slice(0,65) + '…' : item.description}
+                  </div>
+                  <div className="rpi-fee">${item.scheduleFee.toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Item detail modal — from reference panel */}
+      {refSelectedItem && (
+        <div className="item-detail-overlay" onClick={() => setRefSelectedItem(null)}>
+          <div className="item-detail" onClick={e => e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
+              <h2>Item {refSelectedItem.itemNum}</h2>
+              <button className="btn" onClick={() => setRefSelectedItem(null)} style={{padding:'4px 12px'}}>Close</button>
+            </div>
+            <div className="field">
+              <div className="field-label">Schedule Fee</div>
+              <div className="field-value" style={{fontSize:20,fontWeight:700,color:'var(--success)'}}>
+                ${refSelectedItem.scheduleFee.toFixed(2)}
+              </div>
+            </div>
+            {refSelectedItem.benefit100 && !refSelectedItem.benefit85 && (
+              <div className="field">
+                <div className="field-label">Medicare Benefit (100% — GP items)</div>
+                <div className="field-value" style={{fontWeight:600}}>${refSelectedItem.benefit100.toFixed(2)}</div>
+              </div>
+            )}
+            {refSelectedItem.benefit85 && (
+              <div className="field">
+                <div className="field-label">Medicare Benefit (85% of schedule fee)</div>
+                <div className="field-value" style={{fontWeight:600}}>${refSelectedItem.benefit85.toFixed(2)}</div>
+              </div>
+            )}
+            {refSelectedItem.benefit75 && (
+              <div className="field">
+                <div className="field-label">Medicare Benefit (75% — out-of-hospital)</div>
+                <div className="field-value" style={{fontWeight:600}}>${refSelectedItem.benefit75.toFixed(2)}</div>
+              </div>
+            )}
+            <div className="field">
+              <div className="field-label">Requirements / Description</div>
+              <div className="field-value" style={{lineHeight:1.65,fontSize:13}}>{refSelectedItem.description}</div>
+            </div>
+            {refSelectedItem.group && (
+              <div className="field">
+                <div className="field-label">MBS Group</div>
+                <div className="field-value">Category {refSelectedItem.category} / Group {refSelectedItem.group} / Subgroup {refSelectedItem.subgroup}</div>
+              </div>
+            )}
+            {refSelectedItem.tags && refSelectedItem.tags.length > 0 && (
+              <div className="field">
+                <div className="field-label">Tags</div>
+                <div className="field-value">
+                  {refSelectedItem.tags.map((tag,j) => (
+                    <span key={j} className={`tag ${tag.includes('Video') || tag.includes('Phone') ? 'tag-telehealth' : tag.includes('Initial') ? 'tag-initial' : tag.includes('Subsequent') ? 'tag-subsequent' : 'tag-inperson'}`} style={{marginBottom:4}}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+function BrowseTab({ items }) {
+  const [search, setSearch] = useState("");
+  const [specFilter, setSpecFilter] = useState("all");
+  const [modalityFilter, setModalityFilter] = useState("all");
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const filtered = useMemo(() => {
+    let result = items;
+
+    if (specFilter !== "all") {
+      result = result.filter(i => i.specialty && i.specialty.includes(specFilter));
+    }
+
+    if (modalityFilter !== "all") {
+      result = result.filter(i => i.modality === modalityFilter || !i.modality);
+    }
+
+    if (search.trim()) {
+      const terms = search.toLowerCase().split(/\s+/);
+      result = result.filter(item => {
+        const searchable = `${item.itemNum} ${item.description} ${(item.tags || []).join(' ')}`.toLowerCase();
+        return terms.every(t => searchable.includes(t));
+      });
+    }
+
+    return result.slice(0, 100);
+  }, [items, search, specFilter, modalityFilter]);
+
+  return (
+    <div>
+      <div className="card">
+        <input
+          className="search-box"
+          placeholder="Search by item number, keyword, or description..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          autoFocus
+        />
+        <div className="filter-row">
+          <label>Specialty:</label>
+          <select value={specFilter} onChange={(e) => setSpecFilter(e.target.value)}>
+            <option value="all">All</option>
+            <option value="gp">GP</option>
+            <option value="psychiatrist">Psychiatrist</option>
+            <option value="specialist">Specialist</option>
+          </select>
+          <label style={{marginLeft:12}}>Modality:</label>
+          <select value={modalityFilter} onChange={(e) => setModalityFilter(e.target.value)}>
+            <option value="all">All</option>
+            <option value="in-person">In Person</option>
+            <option value="telehealth-video">Video</option>
+            <option value="telehealth-phone">Phone</option>
+          </select>
+          <span style={{marginLeft:'auto',fontSize:'12px',color:'var(--text-secondary)'}}>
+            {filtered.length} item{filtered.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        {filtered.length === 0 ? (
+          <div style={{padding:24,textAlign:'center',color:'var(--text-secondary)'}}>
+            No items match your search.
+          </div>
+        ) : (
+          filtered.map((item, i) => (
+            <div className="browse-item" key={i} onClick={() => setSelectedItem(item)}>
+              <div className="item-num">{item.itemNum}</div>
+              <div className="item-desc">
+                {item.description}
+                <div style={{marginTop:4}}>
+                  {(item.tags || []).slice(0,4).map((tag,j) => (
+                    <span key={j} className={`tag ${tag.includes('Telehealth') ? 'tag-telehealth' : tag.includes('Initial') ? 'tag-initial' : tag.includes('Subsequent') ? 'tag-subsequent' : 'tag-inperson'}`}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="item-fee">${item.scheduleFee.toFixed(2)}</div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {selectedItem && (
+        <div className="item-detail-overlay" onClick={() => setSelectedItem(null)}>
+          <div className="item-detail" onClick={e => e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+              <h2>Item {selectedItem.itemNum}</h2>
+              <button className="btn" onClick={() => setSelectedItem(null)} style={{padding:'4px 12px'}}>Close</button>
+            </div>
+            <div className="field">
+              <div className="field-label">Schedule Fee</div>
+              <div className="field-value" style={{fontSize:20,fontWeight:700,color:'var(--success)'}}>
+                ${selectedItem.scheduleFee.toFixed(2)}
+              </div>
+            </div>
+            <div className="field">
+              <div className="field-label">Description</div>
+              <div className="field-value">{selectedItem.description}</div>
+            </div>
+            {selectedItem.category && (
+              <div className="field">
+                <div className="field-label">Category / Group</div>
+                <div className="field-value">Category {selectedItem.category} / Group {selectedItem.group} / SubGroup {selectedItem.subgroup}</div>
+              </div>
+            )}
+            {selectedItem.benefitType && (
+              <div className="field">
+                <div className="field-label">Benefit Type</div>
+                <div className="field-value">{selectedItem.benefitType}</div>
+              </div>
+            )}
+            {selectedItem.specialty && selectedItem.specialty.length > 0 && (
+              <div className="field">
+                <div className="field-label">Specialty</div>
+                <div className="field-value">{selectedItem.specialty.join(', ')}</div>
+              </div>
+            )}
+            {selectedItem.modality && (
+              <div className="field">
+                <div className="field-label">Modality</div>
+                <div className="field-value">{selectedItem.modality}</div>
+              </div>
+            )}
+            {selectedItem.tags && selectedItem.tags.length > 0 && (
+              <div className="field">
+                <div className="field-label">Tags</div>
+                <div className="field-value">
+                  {selectedItem.tags.map((tag,i) => (
+                    <span key={i} className="tag tag-inperson" style={{marginBottom:4}}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {selectedItem.fromXml && (
+              <div className="field">
+                <div className="field-label">Source</div>
+                <div className="field-value">Loaded from XML file</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
