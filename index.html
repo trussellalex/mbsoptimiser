@@ -523,84 +523,107 @@ const BUILTIN_ITEMS = [
   // Item 2725 — Focussed Psychological Strategies (≥40 min)
   { itemNum: "2725", description: "Professional attendance at consulting rooms by a GP registered as meeting credentialling requirements, for providing focussed psychological strategies for assessed mental disorders, lasting at least 40 minutes.", scheduleFee: 154.85, benefit100: 154.85, category: "1", group: "A20", subgroup: "2", specialty: ["gp"], consultType: "subsequent", modality: "in-person", minDuration: 40, maxDuration: null, tags: ["Mental Health", "FPS", "Focussed Psychological Strategies", "≥40 min"] },
 
-  // ══ GROUP A3: SPECIALIST ATTENDANCES (In-Person) ════════════════════
-  // Item 104 — Specialist initial attendance (>5 min)
-  { itemNum: "104", description: "Professional attendance at consulting rooms or hospital by a specialist in the practice of the specialist's specialty after referral — initial attendance in a single course of treatment. (Other than a service to which item 106, 109, 125 or 16401 applies.)", scheduleFee: 101.30, benefit85: 86.15, benefit75: 76.00, category: "1", group: "A3", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Initial", "Referred"] },
-  // Item 105 — Specialist subsequent attendance (>5 min)
-  { itemNum: "105", description: "Professional attendance by a specialist in the practice of the specialist's specialty following referral — an attendance after the initial attendance in a single course of treatment, at consulting rooms or hospital. (Other than a service to which item 126 or 16404 applies.)", scheduleFee: 50.95, benefit85: 43.35, benefit75: 38.25, category: "1", group: "A3", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent"] },
-
   // ══ GROUP A4: CONSULTANT PHYSICIAN ATTENDANCES (In-Person) ══════════
   // Item 110 — Consultant physician initial attendance
-  { itemNum: "110", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral by a referring practitioner — initial attendance in a single course of treatment.", scheduleFee: 178.70, benefit85: 151.90, benefit75: 134.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Initial", "Referred", "Consultant Physician"] },
+  { itemNum: "110", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral by a referring practitioner — initial attendance in a single course of treatment.", scheduleFee: 178.70, benefit85: 151.90, benefit75: 134.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Initial", "Referred", "Consultant Physician"],
+    docRequirements: ["Valid referral from a referring practitioner must be on file", "Document that this is the initial attendance in the current course of treatment", "Comprehensive consultation notes including full history, systems review, examination findings, investigations, diagnosis and management plan"] },
   // Item 116 — Consultant physician subsequent attendance (not minor)
-  { itemNum: "116", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each attendance (other than a service to which item 119 applies) after the first in a single course of treatment.", scheduleFee: 89.40, benefit85: 76.00, benefit75: 67.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Consultant Physician"] },
+  { itemNum: "116", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each attendance (other than a service to which item 119 applies) after the first in a single course of treatment.", scheduleFee: 89.40, benefit85: 76.00, benefit75: 67.05, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid (GP referral: 12 months; specialist-to-specialist: 3 months)", "This item is for a substantive subsequent attendance — distinguish from item 119 (minor attendance)", "Standard consultation notes documenting progress, examination findings, response to treatment, and updated management plan"] },
   // Item 119 — Consultant physician subsequent minor attendance
-  { itemNum: "119", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each minor attendance after the first in a single course of treatment.", scheduleFee: 50.95, benefit85: 43.35, benefit75: 38.25, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Consultant Physician"] },
+  { itemNum: "119", description: "Professional attendance at consulting rooms or hospital by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — each minor attendance after the first in a single course of treatment.", scheduleFee: 50.95, benefit85: 43.35, benefit75: 38.25, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid", "Use this item for brief/minor attendances only — a 'minor attendance' is one that does not involve a full history or examination", "Brief consultation notes documenting the purpose and outcome of the minor attendance"] },
   // Item 132 — Complex assessment (≥2 morbidities, ≥45 min, initial, with management plan)
-  { itemNum: "132", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 45 minutes for an initial assessment of a patient with at least 2 morbidities following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Not applicable more than once in preceding 12 months by the same physician.", scheduleFee: 312.45, benefit85: 265.60, benefit75: 234.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min"] },
+  { itemNum: "132", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 45 minutes for an initial assessment of a patient with at least 2 morbidities following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Not applicable more than once in preceding 12 months by the same physician.", scheduleFee: 312.45, benefit85: 265.60, benefit75: 234.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min"],
+    docRequirements: ["Document actual duration of attendance — must be ≥45 minutes", "Patient must have ≥2 documented morbidities — list all active morbidities in the notes", "Comprehensive history must include: (a) psychosocial history and (b) full medication review — document both explicitly", "Comprehensive multi-organ system assessment OR detailed single-organ system assessment must be documented", "A formal consultant physician treatment and management plan of significant complexity must be prepared and provided to the referring practitioner (send/fax letter to GP/NP)", "Verify and document that item 132 (or 92422) has NOT been claimed by you for this patient in the preceding 12 months"] },
   // Item 133 — Complex review (≥2 morbidities, ≥20 min, subsequent)
-  { itemNum: "133", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 20 minutes after the initial attendance for a review of a patient with at least 2 morbidities, if a modified management plan is provided to the referring practitioner. Claimable after item 132; maximum twice per 12 months.", scheduleFee: 156.45, benefit85: 133.00, benefit75: 117.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Complex", "≥2 Morbidities", "Review", "≥20 min"] },
+  { itemNum: "133", description: "Professional attendance by a consultant physician (other than psychiatry) lasting at least 20 minutes after the initial attendance for a review of a patient with at least 2 morbidities, if a modified management plan is provided to the referring practitioner. Claimable after item 132; maximum twice per 12 months.", scheduleFee: 156.45, benefit85: 133.00, benefit75: 117.35, category: "1", group: "A4", subgroup: "1", specialty: ["specialist"], consultType: "subsequent", modality: "in-person", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Complex", "≥2 Morbidities", "Review", "≥20 min"],
+    docRequirements: ["Document actual duration — must be ≥20 minutes", "Patient must have ≥2 documented morbidities", "A modified management plan must be prepared and provided to the referring practitioner (formal written communication required)", "Verify item 132 (or 92422) was claimed by you for this patient in the preceding 12 months — retain record of that date", "Maximum of 2 claims per 12-month period — track count"] },
 
-  // ══ GROUP A40: SPECIALIST & CONSULTANT PHYSICIAN — TELEHEALTH ════════
-  // Item 91822 — Specialist video initial attendance
-  { itemNum: "91822", description: "Video attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance was other than a second or subsequent attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 101.30, benefit85: 86.15, category: "1", group: "A40", subgroup: "4", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Initial", "Video"] },
-  // Item 91823 — Specialist video subsequent attendance
-  { itemNum: "91823", description: "Video attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "4", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Video"] },
+  // ══ GROUP A40: CONSULTANT PHYSICIAN — TELEHEALTH ════════════════════
   // Item 91824 — Consultant physician video initial attendance
-  { itemNum: "91824", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance was other than a second or subsequent attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 178.70, benefit85: 151.90, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Initial", "Video", "Consultant Physician"] },
+  { itemNum: "91824", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance was other than a second or subsequent attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 178.70, benefit85: 151.90, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Initial", "Video", "Consultant Physician"],
+    docRequirements: ["Valid referral from a referring practitioner required", "Attendance must be >5 minutes — document duration", "Patient telehealth eligibility must be confirmed (seen at practice within preceding 12 months, or exemption applies)", "Comprehensive consultation notes documenting history, examination, diagnosis and management plan"] },
   // Item 92422 — Consultant physician video complex initial (≥2 morbidities, ≥45 min — video equivalent of item 132)
-  { itemNum: "92422", description: "Video attendance by a consultant physician (other than psychiatry) of at least 45 minutes for an initial assessment of a patient with at least 2 morbidities (which may include complex congenital, developmental and behavioural disorders) following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken, differential diagnoses formulated; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Cannot be billed on the same day as items 110, 116, 119, 91824, 91825, 91826 or 91836 by the same physician. Not claimable if item 132 or 92422 applied in the preceding 12 months.", scheduleFee: 312.45, benefit85: 265.60, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min", "Consultant Physician"] },
+  { itemNum: "92422", description: "Video attendance by a consultant physician (other than psychiatry) of at least 45 minutes for an initial assessment of a patient with at least 2 morbidities (which may include complex congenital, developmental and behavioural disorders) following referral, if: a comprehensive history including psychosocial history and medication review, and comprehensive multi or detailed single organ system assessment are undertaken, differential diagnoses formulated; and a consultant physician treatment and management plan of significant complexity is prepared and provided to the referring practitioner. Cannot be billed on the same day as items 110, 116, 119, 91824, 91825, 91826 or 91836 by the same physician. Not claimable if item 132 or 92422 applied in the preceding 12 months.", scheduleFee: 312.45, benefit85: 265.60, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "Complex", "≥2 Morbidities", "Management Plan", "≥45 min", "Consultant Physician"],
+    docRequirements: ["Document actual duration — must be ≥45 minutes", "Patient must have ≥2 documented morbidities (may include complex congenital, developmental and behavioural disorders) — list all in notes", "Comprehensive history must include: (a) psychosocial history and (b) full medication review — document both explicitly", "Comprehensive multi-organ or detailed single-organ system assessment must be documented", "Differential diagnoses must be formulated and documented", "Consultant physician treatment and management plan of significant complexity must be prepared AND provided to the referring practitioner", "Must NOT be billed on the same day as items 110, 116, 119, 91824, 91825, 91826 or 91836 by the same physician", "Verify item 132 or 92422 has NOT been claimed by you for this patient in the preceding 12 months"] },
   // Item 92423 — Consultant physician video complex review (≥2 morbidities, ≥20 min — video equivalent of item 133)
-  { itemNum: "92423", description: "Video attendance by a consultant physician (other than psychiatry) of at least 20 minutes after the first attendance in a single course of treatment for a review of a patient with at least 2 morbidities, if: a review covering presenting problems, responses to treatment, comprehensive organ system assessment, and revised diagnoses is undertaken; and a modified consultant physician treatment and management plan is provided to the referring practitioner. Requires item 132 or 92422 to have been claimed in the preceding 12 months by the same physician. Maximum twice in any 12-month period.", scheduleFee: 156.45, benefit85: 133.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Video", "Complex", "≥2 Morbidities", "Review", "≥20 min", "Consultant Physician"] },
+  { itemNum: "92423", description: "Video attendance by a consultant physician (other than psychiatry) of at least 20 minutes after the first attendance in a single course of treatment for a review of a patient with at least 2 morbidities, if: a review covering presenting problems, responses to treatment, comprehensive organ system assessment, and revised diagnoses is undertaken; and a modified consultant physician treatment and management plan is provided to the referring practitioner. Requires item 132 or 92422 to have been claimed in the preceding 12 months by the same physician. Maximum twice in any 12-month period.", scheduleFee: 156.45, benefit85: 133.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 20, maxDuration: null, tags: ["Subsequent", "Video", "Complex", "≥2 Morbidities", "Review", "≥20 min", "Consultant Physician"],
+    docRequirements: ["Document actual duration — must be ≥20 minutes", "Patient must have ≥2 documented morbidities", "Review must document: presenting problems, responses to treatment, comprehensive organ system assessment, and revised diagnoses", "Modified consultant physician treatment and management plan must be provided to the referring practitioner (formal written communication)", "Verify item 132 or 92422 was claimed by you for this patient in the preceding 12 months — record that date", "Maximum of 2 claims per 12-month period — track count"] },
   // Item 91825 — Consultant physician video subsequent (not minor)
-  { itemNum: "91825", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is not a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Video", "Consultant Physician"] },
+  { itemNum: "91825", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is not a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Video", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid", "Attendance must be >5 minutes — document duration", "Standard consultation notes documenting clinical progress, response to treatment, and management updates"] },
   // Item 91826 — Consultant physician video subsequent minor
-  { itemNum: "91826", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Video", "Consultant Physician"] },
-  // Item 91833 — Specialist phone subsequent attendance
-  { itemNum: "91833", description: "Phone attendance for a person by a specialist in the practice of the specialist's specialty following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "7", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Phone"] },
+  { itemNum: "91826", description: "Video attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "5", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Video", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid", "Attendance must be >5 minutes — document duration", "Use only for brief/minor subsequent attendances — brief notes documenting purpose and outcome"] },
   // Item 92440 — Consultant physician phone subsequent (not minor)
-  { itemNum: "92440", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Phone", "Consultant Physician"] },
+  { itemNum: "92440", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is after the first attendance as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 89.40, benefit85: 76.00, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Phone", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid", "Attendance must be >5 minutes — document duration", "Phone is only available for subsequent attendances (not initial) for consultant physicians", "Document patient consent to phone consultation"] },
   // Item 91836 — Consultant physician phone subsequent minor
-  { itemNum: "91836", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Phone", "Consultant Physician"] },
+  { itemNum: "91836", description: "Phone attendance for a person by a consultant physician in the practice of the consultant physician's specialty (other than psychiatry) following referral — where the attendance is a minor attendance after the first as part of a single course of treatment, and was more than 5 minutes in duration.", scheduleFee: 50.95, benefit85: 43.35, category: "1", group: "A40", subgroup: "8", specialty: ["specialist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: null, tags: ["Subsequent", "Minor", "Phone", "Consultant Physician"],
+    docRequirements: ["Original referral must remain valid", "Attendance must be >5 minutes — document duration", "Use only for brief/minor subsequent phone attendances", "Document purpose and outcome of the minor attendance"] },
 
   // ══ GROUP A8: CONSULTANT PSYCHIATRIST ATTENDANCES ════════════════════
   // Item 291 — Psychiatric assessment with management plan (TMAP, >45 min, new referral back to GP)
-  { itemNum: "291", description: "Professional attendance lasting more than 45 minutes at consulting rooms by a consultant psychiatrist, following referral by a GP/NP for assessment or management, if: appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"] },
+  { itemNum: "291", description: "Professional attendance lasting more than 45 minutes at consulting rooms by a consultant psychiatrist, following referral by a GP/NP for assessment or management, if: appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Referral must be from a GP or nurse practitioner specifically (not another specialist)", "Outcome tool (e.g. K10, PHQ-9, DASS) must be used and recorded in clinical notes where clinically appropriate; document why omitted if not used", "Full Mental State Examination (MSE) must be documented in the clinical record", "Comprehensive diagnostic assessment must be documented (presenting history, psychiatric history, family/social/developmental history, risk assessment, formulation, DSM/ICD diagnoses)", "Explicitly document clinical decision that ongoing management by the referring practitioner is appropriate", "Written report to the referring practitioner must be sent within 2 weeks of the attendance — report must include: (1) comprehensive diagnostic assessment, (2) 12-month management plan", "Verify item 291 (or 92435) has NOT been claimed for this patient in the preceding 12 months"] },
   // Item 293 — Review of TMAP (>30 to ≤45 min)
-  { itemNum: "293", description: "Professional attendance lasting more than 30 minutes but not more than 45 minutes at consulting rooms by a consultant psychiatrist, for review of a management plan prepared under item 291 or 92435, following re-referral by the managing practitioner. Requires use of an outcome tool (if appropriate), mental state examination, and review of the comprehensive diagnostic assessment and management plan. Within 2 weeks a revised written report must be provided. Not claimable more than once in preceding 12 months.", scheduleFee: 335.05, benefit85: 284.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "TMAP Review", "30–45 min"] },
+  { itemNum: "293", description: "Professional attendance lasting more than 30 minutes but not more than 45 minutes at consulting rooms by a consultant psychiatrist, for review of a management plan prepared under item 291 or 92435, following re-referral by the managing practitioner. Requires use of an outcome tool (if appropriate), mental state examination, and review of the comprehensive diagnostic assessment and management plan. Within 2 weeks a revised written report must be provided. Not claimable more than once in preceding 12 months.", scheduleFee: 335.05, benefit85: 284.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "TMAP Review", "30–45 min"],
+    docRequirements: ["Document actual duration — must be >30 minutes and ≤45 minutes", "Re-referral from the managing practitioner (GP/NP) must be on file before the attendance", "A prior item 291 or 92435 must have been claimed for this patient (verify and document)", "Outcome tool used and recorded (if clinically appropriate) — document reason if omitted", "Full Mental State Examination (MSE) must be documented", "Review of the comprehensive diagnostic assessment and management plan must be documented in clinical notes", "Revised written report to the referring practitioner must be sent within 2 weeks — report must include updated diagnostic assessment and revised management plan", "Verify item 293 has NOT been claimed for this patient in the preceding 12 months"] },
   // Item 296 — Psychiatrist initial attendance at consulting rooms (new patient or >24 months, >45 min)
-  { itemNum: "296", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance at consulting rooms, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92437 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", ">45 min"] },
+  { itemNum: "296", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance at consulting rooms, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92437 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", ">45 min"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Verify and document that the patient has NOT received a professional attendance from you in the preceding 24 months (check your records)", "Valid referral from a referring practitioner must be on file", "Standard psychiatric consultation notes including MSE, formulation, diagnosis, and management plan", "This item cannot be claimed if items 296, 297, 299, 300–308, 91827–91831, 91837–91839, 92437 or 92478–92483 applied in the preceding 24 months — verify all"] },
   // Item 297 — Psychiatrist initial attendance at hospital (new patient or >24 months, >45 min)
-  { itemNum: "297", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — attendance at hospital, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months.", scheduleFee: 308.30, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", "Hospital", ">45 min"] },
+  { itemNum: "297", description: "Professional attendance lasting more than 45 minutes by a consultant psychiatrist following referral — attendance at hospital, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months.", scheduleFee: 308.30, benefit75: 231.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "initial", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Initial", "New Patient", "Hospital", ">45 min"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Hospital setting — record hospital name and ward/location", "Verify patient has NOT received a professional attendance from you in the preceding 24 months (check your records)", "Valid referral from a referring practitioner must be on file", "Standard psychiatric consultation notes including MSE, formulation, diagnosis, and management plan"] },
   // Item 300 — Psychiatrist subsequent ≤15 min (consulting rooms, ≤50 attendances/year)
-  { itemNum: "300", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", "≤50/year"] },
+  { itemNum: "300", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "Track and verify: combined count of items 300, 302, 304, 306, 308, 91827–91831, 91837–91839 etc. must NOT exceed 50 in the calendar year for this patient — keep a running tally", "Brief consultation notes documenting mental state and management"] },
   // Item 302 — Psychiatrist subsequent >15 to ≤30 min (consulting rooms, ≤50 attendances/year)
-  { itemNum: "302", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", "≤50/year"] },
+  { itemNum: "302", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be >15 and ≤30 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient — keep a running tally", "Consultation notes documenting mental state, response to treatment, and management plan"] },
   // Item 304 — Psychiatrist subsequent >30 to ≤45 min (consulting rooms, ≤50 attendances/year)
-  { itemNum: "304", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", "≤50/year"] },
+  { itemNum: "304", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be >30 and ≤45 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient — keep a running tally", "Consultation notes documenting mental state, response to treatment, and management plan"] },
   // Item 306 — Psychiatrist subsequent >45 to ≤75 min (consulting rooms, ≤50 attendances/year)
-  { itemNum: "306", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", "≤50/year", "Standard"] },
+  { itemNum: "306", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", "≤50/year", "Standard"],
+    docRequirements: ["Document actual duration — must be >45 and ≤75 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient — keep a running tally", "Consultation notes documenting mental state, therapeutic work undertaken, response to treatment, and updated management plan"] },
   // Item 308 — Psychiatrist subsequent >75 min (consulting rooms, ≤50 attendances/year)
-  { itemNum: "308", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", "≤50/year", "Extended"] },
+  { itemNum: "308", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at consulting rooms, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", "≤50/year", "Extended"],
+    docRequirements: ["Document actual duration — must be >75 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient — keep a running tally", "Consultation notes documenting extended therapeutic work, mental state, and updated management plan"] },
   // Item 319 — Psychiatrist intensive psychotherapy (>45 min, ≤160 attendances/year)
-  { itemNum: "319", description: "Professional attendance by a consultant psychiatrist following referral — attendance lasting more than 45 minutes at consulting rooms, if: the formulation of the patient's clinical presentation indicates intensive psychotherapy is a clinically appropriate and indicated treatment; and that attendance and other specified attendances have not exceeded 160 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Subsequent", "Psychotherapy", ">45 min", "≤160/year"] },
+  { itemNum: "319", description: "Professional attendance by a consultant psychiatrist following referral — attendance lasting more than 45 minutes at consulting rooms, if: the formulation of the patient's clinical presentation indicates intensive psychotherapy is a clinically appropriate and indicated treatment; and that attendance and other specified attendances have not exceeded 160 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: null, tags: ["Subsequent", "Psychotherapy", ">45 min", "≤160/year"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Document clinical formulation in the record explicitly stating that intensive psychotherapy is the clinically appropriate and indicated treatment for this patient (this is a mandatory documentation requirement)", "Track and verify: combined attendance count must NOT exceed 160 in the calendar year for this patient", "Consultation notes documenting psychotherapeutic work undertaken in the session"] },
   // Items 310–318 — Over 50 attendances per year (reduced fees)
-  { itemNum: "310", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 25.55, benefit85: 21.75, benefit75: 19.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", ">50/year", "Reduced"] },
-  { itemNum: "312", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", ">50/year", "Reduced"] },
-  { itemNum: "314", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 79.00, benefit85: 67.15, benefit75: 59.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", ">50/year", "Reduced"] },
-  { itemNum: "316", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 108.85, benefit85: 92.55, benefit75: 81.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", ">50/year", "Reduced"] },
-  { itemNum: "318", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 126.20, benefit85: 107.30, benefit75: 94.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", ">50/year", "Reduced"] },
+  { itemNum: "310", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 25.55, benefit85: 21.75, benefit75: 19.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "≤15 min", ">50/year", "Reduced"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "Only claimable once the combined attendance count for the year EXCEEDS 50 — document and retain attendance count records", "Brief consultation notes documenting mental state and management"] },
+  { itemNum: "312", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "15–30 min", ">50/year", "Reduced"],
+    docRequirements: ["Document actual duration — must be >15 and ≤30 minutes", "Only claimable once the combined attendance count for the year EXCEEDS 50 — retain attendance count records", "Consultation notes documenting mental state and management"] },
+  { itemNum: "314", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 79.00, benefit85: 67.15, benefit75: 59.25, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "30–45 min", ">50/year", "Reduced"],
+    docRequirements: ["Document actual duration — must be >30 and ≤45 minutes", "Only claimable once the combined attendance count for the year EXCEEDS 50 — retain attendance count records", "Consultation notes documenting mental state and management"] },
+  { itemNum: "316", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 108.85, benefit85: 92.55, benefit75: 81.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "45–75 min", ">50/year", "Reduced"],
+    docRequirements: ["Document actual duration — must be >45 and ≤75 minutes", "Only claimable once the combined attendance count for the year EXCEEDS 50 — retain attendance count records", "Consultation notes documenting mental state and management"] },
+  { itemNum: "318", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes at consulting rooms, if that attendance and other specified attendances EXCEED 50 attendances in a calendar year for the patient. (Reduced rate applies.)", scheduleFee: 126.20, benefit85: 107.30, benefit75: 94.65, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", ">75 min", ">50/year", "Reduced"],
+    docRequirements: ["Document actual duration — must be >75 minutes", "Only claimable once the combined attendance count for the year EXCEEDS 50 — retain attendance count records", "Consultation notes documenting mental state and management"] },
   // Hospital attendances
-  { itemNum: "320", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at hospital.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Hospital", "≤15 min"] },
-  { itemNum: "322", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at hospital.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Hospital", "15–30 min"] },
-  { itemNum: "324", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at hospital.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Hospital", "30–45 min"] },
-  { itemNum: "326", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at hospital.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Hospital", "45–75 min"] },
-  { itemNum: "328", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at hospital.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Hospital", ">75 min"] },
+  { itemNum: "320", description: "Professional attendance by a consultant psychiatrist following referral — attendance of not more than 15 minutes in duration at hospital.", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Hospital", "≤15 min"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "Hospital setting — record hospital name", "Brief consultation notes documenting mental state, observations, and management in the hospital record"] },
+  { itemNum: "322", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 15 minutes but not more than 30 minutes in duration at hospital.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Hospital", "15–30 min"],
+    docRequirements: ["Document actual duration — must be >15 and ≤30 minutes", "Hospital setting — record hospital name", "Consultation notes in hospital record documenting mental state, progress, and management plan"] },
+  { itemNum: "324", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 30 minutes but not more than 45 minutes in duration at hospital.", scheduleFee: 157.60, benefit85: 134.00, benefit75: 118.20, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Hospital", "30–45 min"],
+    docRequirements: ["Document actual duration — must be >30 and ≤45 minutes", "Hospital setting — record hospital name", "Consultation notes documenting mental state, therapeutic interventions, and management plan"] },
+  { itemNum: "326", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 45 minutes but not more than 75 minutes in duration at hospital.", scheduleFee: 217.50, benefit85: 184.90, benefit75: 163.15, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Hospital", "45–75 min"],
+    docRequirements: ["Document actual duration — must be >45 and ≤75 minutes", "Hospital setting — record hospital name", "Consultation notes documenting extended therapeutic work, mental state, and updated management plan"] },
+  { itemNum: "328", description: "Professional attendance by a consultant psychiatrist following referral — attendance of more than 75 minutes in duration at hospital.", scheduleFee: 252.40, benefit85: 214.55, benefit75: 189.30, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Hospital", ">75 min"],
+    docRequirements: ["Document actual duration — must be >75 minutes", "Hospital setting — record hospital name", "Consultation notes documenting extended work, mental state, and management plan"] },
   // Collateral interviews
-  { itemNum: "341", description: "An interview, lasting not more than 15 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year (combined with items 343, 345, 347, 349 etc.).", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Collateral", "Third Party Interview", "≤15 min"] },
-  { itemNum: "343", description: "An interview, lasting more than 15 minutes but not more than 30 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Collateral", "Third Party Interview", "15–30 min"] },
+  { itemNum: "341", description: "An interview, lasting not more than 15 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year (combined with items 343, 345, 347, 349 etc.).", scheduleFee: 51.30, benefit85: 43.65, benefit75: 38.50, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 0, maxDuration: 15, tags: ["Collateral", "Third Party Interview", "≤15 min"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "The patient must NOT be in attendance — document explicitly that the patient was absent", "Record the name, relationship, and contact details of the person interviewed", "Document the clinical purpose: either (a) initial diagnostic evaluation OR (b) continuing management of the patient", "Track combined count of collateral interview items (341, 343, 345, 347, 349, etc.) — maximum 15 per calendar year for this patient"] },
+  { itemNum: "343", description: "An interview, lasting more than 15 minutes but not more than 30 minutes, of a person other than the patient (when the patient is not in attendance) by a consultant psychiatrist following referral, for the purposes of initial diagnostic evaluation or continuing management of the patient. Not exceeding 15 services per calendar year.", scheduleFee: 102.40, benefit85: 87.05, benefit75: 76.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 15, maxDuration: 30, tags: ["Collateral", "Third Party Interview", "15–30 min"],
+    docRequirements: ["Document actual duration — must be >15 and ≤30 minutes", "The patient must NOT be in attendance — document explicitly that the patient was absent", "Record the name, relationship, and contact details of the person interviewed", "Document the clinical purpose: either (a) initial diagnostic evaluation OR (b) continuing management of the patient", "Track combined count of collateral interview items — maximum 15 per calendar year for this patient"] },
   // Group psychotherapy
-  { itemNum: "342", description: "Group psychotherapy (including any associated consultations on the same occasion) of not less than 1 hour under the continuous direct supervision of a consultant psychiatrist, involving a group of 2 to 9 unrelated patients or a family group of more than 3 patients — each referred by a referring practitioner — each patient.", scheduleFee: 58.35, benefit85: 49.60, benefit75: 43.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 60, maxDuration: null, tags: ["Group Therapy", "Psychotherapy", "≥1 hour", "Per patient"] },
+  { itemNum: "342", description: "Group psychotherapy (including any associated consultations on the same occasion) of not less than 1 hour under the continuous direct supervision of a consultant psychiatrist, involving a group of 2 to 9 unrelated patients or a family group of more than 3 patients — each referred by a referring practitioner — each patient.", scheduleFee: 58.35, benefit85: 49.60, benefit75: 43.80, category: "1", group: "A8", subgroup: "1", specialty: ["psychiatrist"], consultType: "subsequent", modality: "in-person", minDuration: 60, maxDuration: null, tags: ["Group Therapy", "Psychotherapy", "≥1 hour", "Per patient"],
+    docRequirements: ["Document actual duration — must be ≥1 hour (60 minutes)", "Document continuous direct supervision by the consultant psychiatrist throughout the entire session", "Group composition: must be 2–9 unrelated patients OR a family group of more than 3 patients — document all attendees", "All patients must have a valid referral from a referring practitioner — verify referrals for every patient before billing", "Billed per patient — submit a separate claim for each patient attending", "Brief group therapy notes for each patient documenting participation and progress"] },
 
   // ══ GROUP A40: GP MENTAL HEALTH TREATMENT PLAN — VIDEO (Subgroup A40) ═
   // Item 92112 — Video MHTP preparation, GP without MH skills training, 20–<40 min
@@ -636,29 +659,39 @@ const BUILTIN_ITEMS = [
 
   // ══ GROUP A40: PSYCHIATRIST VIDEO — INITIAL SERVICES (Subgroup 6) ═══
   // Item 92435 — Psychiatrist video TMAP (equivalent of item 291 via video)
-  { itemNum: "92435", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral by a GP or NP, if: an appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by the referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in the preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"] },
+  { itemNum: "92435", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral by a GP or NP, if: an appropriate outcome tool is used where clinically appropriate; a mental state examination is carried out; a comprehensive diagnostic assessment is undertaken; the consultant decides ongoing management by the referring practitioner is appropriate; and within 2 weeks a written report including a comprehensive diagnostic assessment and a 12-month management plan is provided to the referring practitioner. Not claimable more than once in the preceding 12 months.", scheduleFee: 535.95, benefit85: 455.60, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "TMAP", "Diagnostic Assessment", "Management Plan", ">45 min"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Referral must be from a GP or nurse practitioner specifically (not another specialist)", "Patient telehealth eligibility must be confirmed", "Outcome tool (e.g. K10, PHQ-9, DASS) used and recorded where clinically appropriate; document reason if omitted", "Full Mental State Examination (MSE) must be documented in the clinical record", "Comprehensive diagnostic assessment must be documented (full psychiatric history, formulation, diagnoses)", "Explicitly document clinical decision that ongoing management by the referring practitioner is appropriate", "Written report to the referring practitioner must be sent within 2 weeks — must include: (1) comprehensive diagnostic assessment and (2) 12-month management plan", "Verify item 291 (or 92435) has NOT been claimed for this patient in the preceding 12 months"] },
   // Item 92437 — Psychiatrist video initial attendance (equivalent of item 296 via video)
-  { itemNum: "92437", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92435 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "New Patient", ">45 min"] },
+  { itemNum: "92437", description: "Video attendance lasting more than 45 minutes by a consultant psychiatrist following referral — initial attendance, if the patient is a new patient or has not received a professional attendance from this consultant in the preceding 24 months. Not applicable if items 296, 297, 299, 300, 302, 304, 306, 308, 91827–91831, 91837–91839, 92435 or 92478–92483 applied in the preceding 24 months.", scheduleFee: 308.30, benefit85: 262.10, benefit75: 231.25, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "initial", modality: "telehealth-video", minDuration: 45, maxDuration: null, tags: ["Initial", "Video", "New Patient", ">45 min"],
+    docRequirements: ["Document actual duration — must be >45 minutes", "Verify and document that the patient has NOT received a professional attendance from you in the preceding 24 months", "Patient telehealth eligibility must be confirmed", "Valid referral from a referring practitioner must be on file", "Standard psychiatric consultation notes including MSE, formulation, diagnosis, and management plan", "Cannot be claimed if items 296, 297, 299, 300–308, 91827–91831, 91837–91839, 92435 or 92478–92483 applied in the preceding 24 months — verify all"] },
 
   // ══ GROUP A40: PSYCHIATRIST VIDEO — SUBSEQUENT SERVICES (Subgroup 6) ═
   // Item 91827 — Psychiatrist video subsequent ≤15 min (≤50/year)
-  { itemNum: "91827", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Video", "≤15 min", "≤50/year"] },
+  { itemNum: "91827", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Video", "≤15 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient", "Patient telehealth eligibility confirmed", "Brief consultation notes documenting mental state and management"] },
   // Item 91828 — Psychiatrist video subsequent >15 to ≤30 min (≤50/year)
-  { itemNum: "91828", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Video", "15–30 min", "≤50/year"] },
+  { itemNum: "91828", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Video", "15–30 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥15 and ≤30 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient", "Patient telehealth eligibility confirmed", "Consultation notes documenting mental state and management"] },
   // Item 91829 — Psychiatrist video subsequent >30 to ≤45 min (≤50/year)
-  { itemNum: "91829", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Video", "30–45 min", "≤50/year"] },
+  { itemNum: "91829", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Video", "30–45 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥30 and ≤45 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient", "Patient telehealth eligibility confirmed", "Consultation notes documenting mental state and management"] },
   // Item 91830 — Psychiatrist video subsequent >45 to ≤75 min (≤50/year)
-  { itemNum: "91830", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 45 minutes but not more than 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Video", "45–75 min", "≤50/year"] },
+  { itemNum: "91830", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 45 minutes but not more than 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 217.50, benefit85: 184.90, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 45, maxDuration: 75, tags: ["Subsequent", "Video", "45–75 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥45 and ≤75 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient", "Patient telehealth eligibility confirmed", "Consultation notes documenting therapeutic work, mental state, and management"] },
   // Item 91831 — Psychiatrist video subsequent >75 min (≤50/year)
-  { itemNum: "91831", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Video", ">75 min", "≤50/year"] },
+  { itemNum: "91831", description: "Video attendance for a person by a consultant psychiatrist following referral — attendance of at least 75 minutes, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 252.40, benefit85: 214.55, category: "1", group: "A40", subgroup: "6", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-video", minDuration: 75, maxDuration: null, tags: ["Subsequent", "Video", ">75 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥75 minutes", "Verify combined attendance count for calendar year has NOT exceeded 50 for this patient", "Patient telehealth eligibility confirmed", "Consultation notes documenting extended therapeutic work and management"] },
 
   // ══ GROUP A40: PSYCHIATRIST PHONE SERVICES (Subgroup 9) ══════════════
   // Item 91837 — Psychiatrist phone subsequent ≤15 min (≤50/year; after first attendance in single course)
-  { itemNum: "91837", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes. For subsequent attendances only (after the first in a single course of treatment), if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Phone", "≤15 min", "≤50/year"] },
+  { itemNum: "91837", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of not more than 15 minutes. For subsequent attendances only (after the first in a single course of treatment), if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 51.30, benefit85: 43.65, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 0, maxDuration: 15, tags: ["Subsequent", "Phone", "≤15 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≤15 minutes", "Phone is only available for subsequent attendances (not initial) — verify prior attendance exists", "Verify combined attendance count for calendar year has NOT exceeded 50", "Brief consultation notes documenting mental state and management"] },
   // Item 91838 — Psychiatrist phone subsequent >15 to ≤30 min (≤50/year)
-  { itemNum: "91838", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Phone", "15–30 min", "≤50/year"] },
+  { itemNum: "91838", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 15 minutes but not more than 30 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 102.40, benefit85: 87.05, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 15, maxDuration: 30, tags: ["Subsequent", "Phone", "15–30 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥15 and ≤30 minutes", "Phone is only available for subsequent attendances (not initial)", "Verify combined attendance count for calendar year has NOT exceeded 50", "Consultation notes documenting mental state and management"] },
   // Item 91839 — Psychiatrist phone subsequent >30 to ≤45 min (≤50/year)
-  { itemNum: "91839", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Phone", "30–45 min", "≤50/year"] },
+  { itemNum: "91839", description: "Phone attendance for a person by a consultant psychiatrist following referral — attendance of at least 30 minutes but not more than 45 minutes. For subsequent attendances only, if that attendance and other specified attendances have not exceeded 50 attendances in a calendar year for the patient.", scheduleFee: 157.60, benefit85: 134.00, category: "1", group: "A40", subgroup: "9", specialty: ["psychiatrist"], consultType: "subsequent", modality: "telehealth-phone", minDuration: 30, maxDuration: 45, tags: ["Subsequent", "Phone", "30–45 min", "≤50/year"],
+    docRequirements: ["Document actual duration — must be ≥30 and ≤45 minutes", "Phone is only available for subsequent attendances (not initial)", "Verify combined attendance count for calendar year has NOT exceeded 50", "Consultation notes documenting mental state and management"] },
 ];
 
 // ─── OPTIMIZATION RULES ──────────────────────────────────────────────
@@ -1160,13 +1193,18 @@ function App() {
         <div className={`tab ${tab === 'browse' ? 'active' : ''}`} onClick={() => setTab('browse')}>
           Browse &amp; Search
         </div>
+        <div className={`tab ${tab === 'dva' ? 'active' : ''}`} onClick={() => setTab('dva')}>
+          DVA Billing
+        </div>
       </div>
 
       <div className="container">
         {tab === 'optimize' ? (
           <OptimizerTab items={allItems} />
-        ) : (
+        ) : tab === 'browse' ? (
           <BrowseTab items={allItems} />
+        ) : (
+          <DVATab />
         )}
       </div>
     </div>
@@ -1262,7 +1300,7 @@ function OptimizerTab({ items }) {
           <div className="card">
             <h2>1. Specialty</h2>
             <div className="btn-row">
-              {[["gp","GP"],["psychiatrist","Psychiatrist"],["specialist","Specialist (Consultant Physician)"]].map(([val,label]) => (
+              {[["gp","GP"],["psychiatrist","Psychiatrist"],["specialist","Consultant Physician"]].map(([val,label]) => (
                 <button key={val} className={`btn ${specialty === val ? 'selected' : ''}`}
                   onClick={() => { setSpecialty(val); setConsultType(""); setDuration(null); setGpMode(""); setRefSelectedItem(null); }}>
                   {label}
@@ -1648,6 +1686,16 @@ function OptimizerTab({ items }) {
               <div className="field-label">Requirements / Description</div>
               <div className="field-value" style={{lineHeight:1.65,fontSize:13}}>{refSelectedItem.description}</div>
             </div>
+            {refSelectedItem.docRequirements && refSelectedItem.docRequirements.length > 0 && (
+              <div className="field" style={{background:'#fff8e6',border:'1px solid #f5c842',borderRadius:6,padding:'10px 12px'}}>
+                <div className="field-label" style={{color:'#b06000',marginBottom:6}}>Documentation Requirements</div>
+                <ul style={{margin:0,paddingLeft:18,fontSize:12.5,lineHeight:1.65,color:'#5f3800'}}>
+                  {refSelectedItem.docRequirements.map((req,j) => (
+                    <li key={j} style={{marginBottom:5}}>{req}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {refSelectedItem.group && (
               <div className="field">
                 <div className="field-label">MBS Group</div>
@@ -1718,7 +1766,7 @@ function BrowseTab({ items }) {
             <option value="all">All</option>
             <option value="gp">GP</option>
             <option value="psychiatrist">Psychiatrist</option>
-            <option value="specialist">Specialist</option>
+            <option value="specialist">Consultant Physician</option>
           </select>
           <label style={{marginLeft:12}}>Modality:</label>
           <select value={modalityFilter} onChange={(e) => setModalityFilter(e.target.value)}>
@@ -1799,6 +1847,16 @@ function BrowseTab({ items }) {
                 <div className="field-value">{selectedItem.modality}</div>
               </div>
             )}
+            {selectedItem.docRequirements && selectedItem.docRequirements.length > 0 && (
+              <div className="field" style={{background:'#fff8e6',border:'1px solid #f5c842',borderRadius:6,padding:'10px 12px'}}>
+                <div className="field-label" style={{color:'#b06000',marginBottom:6}}>Documentation Requirements</div>
+                <ul style={{margin:0,paddingLeft:18,fontSize:12.5,lineHeight:1.65,color:'#5f3800'}}>
+                  {selectedItem.docRequirements.map((req,i) => (
+                    <li key={i} style={{marginBottom:5}}>{req}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {selectedItem.tags && selectedItem.tags.length > 0 && (
               <div className="field">
                 <div className="field-label">Tags</div>
@@ -1816,6 +1874,302 @@ function BrowseTab({ items }) {
               </div>
             )}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── DVA BILLING DECISION TREE ──────────────────────────────────────
+// DVA billing uses the same MBS item numbers for most consultations, but
+// DVA pays the provider directly at DVA schedule fees (generally higher than MBS).
+// No Medicare benefit is involved — DVA is a completely separate payment system.
+// Providers must be registered as DVA providers to bill DVA.
+// Fees shown are MBS Schedule Fees as a reference baseline; actual DVA fees are
+// set by DVA's Medical Attendances Schedule and are typically higher — always
+// check the current DVA fee schedule at dva.gov.au before billing.
+
+const DVA_NOTES = {
+  gold: "Gold Card covers ALL medical conditions for all clinically necessary treatment. No patient out-of-pocket for services up to the DVA schedule fee.",
+  white: "White Card covers ONLY accepted service-related conditions listed on the card, plus a set of non-liability conditions (e.g. all cancer, PTSD, mental health conditions under NMHSS). Always verify condition coverage before billing.",
+  orange: "Orange Card covers pharmaceuticals only. Standard MBS billing applies for medical consultations — DVA Orange is not relevant to consultation billing.",
+};
+
+const DVA_ITEMS = {
+  gp: {
+    "in-person": [
+      { item: "3", label: "Level A (brief, <6 min)", fee: 20.05 },
+      { item: "23", label: "Level B (6–<20 min)", fee: 43.90 },
+      { item: "36", label: "Level C (≥20 min)", fee: 84.90 },
+      { item: "44", label: "Level D (≥40 min)", fee: 125.10 },
+      { item: "123", label: "Level E (≥60 min)", fee: 202.65 },
+    ],
+    "telehealth-video": [
+      { item: "91790", label: "Level A video (<6 min)", fee: 20.05 },
+      { item: "91800", label: "Level B video (6–<20 min)", fee: 43.90 },
+      { item: "91801", label: "Level C video (≥20 min)", fee: 84.90 },
+      { item: "91802", label: "Level D video (≥40 min)", fee: 125.10 },
+      { item: "91920", label: "Level E video (≥60 min)", fee: 202.65 },
+    ],
+    "telehealth-phone": [
+      { item: "91890", label: "Level A phone (<6 min)", fee: 20.05 },
+      { item: "91891", label: "Level B phone (≥6 min)", fee: 43.90 },
+    ],
+  },
+  specialist: {
+    "in-person": [
+      { item: "110", label: "Consultant physician — initial attendance", fee: 178.70 },
+      { item: "116", label: "Consultant physician — subsequent attendance", fee: 89.40 },
+      { item: "119", label: "Consultant physician — subsequent minor attendance", fee: 50.95 },
+      { item: "132", label: "Consultant physician — complex initial (≥2 morbidities, ≥45 min, management plan)", fee: 312.45 },
+      { item: "133", label: "Consultant physician — complex review (≥2 morbidities, ≥20 min)", fee: 156.45 },
+    ],
+    "telehealth-video": [
+      { item: "91824", label: "Consultant physician — initial video attendance", fee: 178.70 },
+      { item: "91825", label: "Consultant physician — subsequent video attendance", fee: 89.40 },
+      { item: "92422", label: "Consultant physician — complex initial video (≥2 morbidities, ≥45 min)", fee: 312.45 },
+      { item: "92423", label: "Consultant physician — complex review video (≥20 min)", fee: 156.45 },
+    ],
+    "telehealth-phone": [
+      { item: "92440", label: "Consultant physician — subsequent phone attendance", fee: 89.40 },
+    ],
+  },
+  psychiatrist: {
+    "in-person": [
+      { item: "291", label: "TMAP — assessment with 12-month management plan (>45 min, to GP/NP)", fee: 535.95 },
+      { item: "293", label: "TMAP review — re-referral required (30–45 min)", fee: 335.05 },
+      { item: "296", label: "Initial — new patient or >24 months gap (>45 min, consulting rooms)", fee: 308.30 },
+      { item: "297", label: "Initial — new patient or >24 months gap (>45 min, hospital)", fee: 308.30 },
+      { item: "300", label: "Subsequent — ≤15 min (consulting rooms, ≤50/year)", fee: 51.30 },
+      { item: "302", label: "Subsequent — 15–30 min (consulting rooms, ≤50/year)", fee: 102.40 },
+      { item: "304", label: "Subsequent — 30–45 min (consulting rooms, ≤50/year)", fee: 157.60 },
+      { item: "306", label: "Subsequent — 45–75 min (consulting rooms, ≤50/year)", fee: 217.50 },
+      { item: "308", label: "Subsequent — >75 min (consulting rooms, ≤50/year)", fee: 252.40 },
+      { item: "319", label: "Psychotherapy — intensive, >45 min (≤160/year)", fee: 217.50 },
+      { item: "320", label: "Subsequent hospital — ≤15 min", fee: 51.30 },
+      { item: "322", label: "Subsequent hospital — 15–30 min", fee: 102.40 },
+      { item: "324", label: "Subsequent hospital — 30–45 min", fee: 157.60 },
+      { item: "326", label: "Subsequent hospital — 45–75 min", fee: 217.50 },
+      { item: "328", label: "Subsequent hospital — >75 min", fee: 252.40 },
+    ],
+    "telehealth-video": [
+      { item: "92435", label: "TMAP via video (>45 min, to GP/NP)", fee: 535.95 },
+      { item: "92437", label: "Initial video — new patient or >24 months gap (>45 min)", fee: 308.30 },
+      { item: "91827", label: "Subsequent video — ≤15 min (≤50/year)", fee: 51.30 },
+      { item: "91828", label: "Subsequent video — 15–30 min (≤50/year)", fee: 102.40 },
+      { item: "91829", label: "Subsequent video — 30–45 min (≤50/year)", fee: 157.60 },
+      { item: "91830", label: "Subsequent video — 45–75 min (≤50/year)", fee: 217.50 },
+      { item: "91831", label: "Subsequent video — >75 min (≤50/year)", fee: 252.40 },
+    ],
+    "telehealth-phone": [
+      { item: "91837", label: "Subsequent phone — ≤15 min (≤50/year)", fee: 51.30 },
+      { item: "91838", label: "Subsequent phone — 15–30 min (≤50/year)", fee: 102.40 },
+      { item: "91839", label: "Subsequent phone — 30–45 min (≤50/year)", fee: 157.60 },
+    ],
+  },
+};
+
+function DVATab() {
+  const [cardType, setCardType] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [modality, setModality] = useState("");
+  const [conditionCovered, setConditionCovered] = useState(null);
+  const [showItems, setShowItems] = useState(false);
+
+  const reset = () => {
+    setCardType("");
+    setSpecialty("");
+    setModality("");
+    setConditionCovered(null);
+    setShowItems(false);
+  };
+
+  const items = useMemo(() => {
+    if (!specialty || !modality) return [];
+    return (DVA_ITEMS[specialty]?.[modality]) || [];
+  }, [specialty, modality]);
+
+  const canBill = cardType === "gold" || (cardType === "white" && conditionCovered === true);
+  const whiteNeedsCoverageCheck = cardType === "white" && conditionCovered === null;
+
+  return (
+    <div>
+      {/* Card type */}
+      <div className="card">
+        <h2 style={{marginBottom:14,fontSize:16}}>DVA Billing Decision Tree</h2>
+        <p style={{fontSize:13,color:'var(--text-secondary)',marginBottom:16,lineHeight:1.6}}>
+          DVA billing uses the same MBS item numbers for medical consultations, but DVA pays the provider directly at DVA schedule fees (typically higher than MBS). This tab helps you determine eligibility and select the correct item. Always verify coverage before claiming.
+        </p>
+
+        <div className="field-label" style={{marginBottom:8}}>Step 1 — DVA card type</div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
+          {[
+            { key: "gold", label: "Gold Card", sub: "All conditions" },
+            { key: "white", label: "White Card", sub: "Service-related conditions" },
+            { key: "orange", label: "Orange Card", sub: "Pharmaceuticals only" },
+          ].map(c => (
+            <div key={c.key}
+              onClick={() => { setCardType(c.key); setConditionCovered(null); setShowItems(false); }}
+              style={{cursor:'pointer',padding:'10px 16px',borderRadius:8,border:`2px solid ${cardType===c.key ? 'var(--primary)' : 'var(--border)'}`,background:cardType===c.key?'var(--primary-light)':'var(--card)',minWidth:130,flex:1}}>
+              <div style={{fontWeight:600,fontSize:14,color:cardType===c.key?'var(--primary)':'var(--text)'}}>{c.label}</div>
+              <div style={{fontSize:12,color:'var(--text-secondary)',marginTop:2}}>{c.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {cardType && (
+          <div className={`warn-box`} style={{background:cardType==='gold'?'var(--success-light)':cardType==='white'?'var(--warn-light)':'var(--primary-light)',borderColor:cardType==='gold'?'var(--success)':cardType==='white'?'var(--warn)':'var(--primary)',marginBottom:16}}>
+            <strong>{cardType === 'gold' ? '✓ Gold Card' : cardType === 'white' ? 'White Card' : 'ℹ Orange Card'}: </strong>
+            {DVA_NOTES[cardType]}
+          </div>
+        )}
+
+        {/* Orange card — nothing more to do */}
+        {cardType === "orange" && (
+          <div style={{padding:'12px 0',color:'var(--text-secondary)',fontSize:13}}>
+            Orange Card only covers pharmaceuticals. For medical consultations, bill through standard Medicare. No DVA consultation billing applies.
+          </div>
+        )}
+
+        {/* White card — condition coverage check */}
+        {cardType === "white" && (
+          <div style={{marginBottom:16}}>
+            <div className="field-label" style={{marginBottom:8}}>Is this consultation for an accepted service-related condition (or an NMHSS / non-liability condition)?</div>
+            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+              {[
+                { val: true, label: "Yes — condition is covered", style: {border:'2px solid var(--success)',background:'var(--success-light)'} },
+                { val: false, label: "No — not a covered condition", style: {border:'2px solid var(--danger)',background:'#fef2f2'} },
+                { val: null, label: "Unsure / need to check", style: {border:'2px solid var(--border)'} },
+              ].map(o => (
+                <div key={String(o.val)}
+                  onClick={() => setConditionCovered(o.val)}
+                  style={{cursor:'pointer',padding:'8px 14px',borderRadius:8,flex:1,minWidth:140,...(conditionCovered===o.val?o.style:{border:'2px solid var(--border)'})}}>
+                  <div style={{fontSize:13,fontWeight:conditionCovered===o.val?600:400}}>{o.label}</div>
+                </div>
+              ))}
+            </div>
+            {conditionCovered === false && (
+              <div style={{marginTop:10,padding:'10px 12px',background:'#fef2f2',border:'1px solid var(--danger)',borderRadius:6,fontSize:13,color:'#8b0000'}}>
+                White Card does not cover this condition. Bill through standard Medicare MBS for this patient. If the patient may have an applicable non-liability condition (PTSD, mental health, cancer, etc.), check with DVA before declining to bill DVA.
+              </div>
+            )}
+            {conditionCovered === null && (
+              <div style={{marginTop:10,padding:'10px 12px',background:'var(--primary-light)',border:'1px solid var(--border)',borderRadius:6,fontSize:13,color:'var(--text-secondary)'}}>
+                Check the patient's White Card conditions and the DVA non-liability health care conditions at dva.gov.au before proceeding.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Specialty selection */}
+        {canBill && (
+          <>
+            <div className="field-label" style={{marginBottom:8}}>Step 2 — Provider type</div>
+            <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
+              {[
+                { key: "gp", label: "General Practitioner" },
+                { key: "specialist", label: "Specialist / Consultant Physician" },
+                { key: "psychiatrist", label: "Consultant Psychiatrist" },
+              ].map(s => (
+                <div key={s.key}
+                  onClick={() => { setSpecialty(s.key); setModality(""); setShowItems(false); }}
+                  style={{cursor:'pointer',padding:'10px 16px',borderRadius:8,border:`2px solid ${specialty===s.key?'var(--primary)':'var(--border)'}`,background:specialty===s.key?'var(--primary-light)':'var(--card)',flex:1,minWidth:140}}>
+                  <div style={{fontWeight:600,fontSize:13,color:specialty===s.key?'var(--primary)':'var(--text)'}}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Modality selection */}
+            {specialty && (
+              <>
+                <div className="field-label" style={{marginBottom:8}}>Step 3 — Modality</div>
+                <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
+                  {[
+                    { key: "in-person", label: "In Person" },
+                    { key: "telehealth-video", label: "Video" },
+                    { key: "telehealth-phone", label: "Phone" },
+                  ].map(m => (
+                    <div key={m.key}
+                      onClick={() => { setModality(m.key); setShowItems(true); }}
+                      style={{cursor:'pointer',padding:'10px 16px',borderRadius:8,border:`2px solid ${modality===m.key?'var(--primary)':'var(--border)'}`,background:modality===m.key?'var(--primary-light)':'var(--card)',flex:1,minWidth:110}}>
+                      <div style={{fontWeight:600,fontSize:13,color:modality===m.key?'var(--primary)':'var(--text)'}}>{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* DVA Results */}
+      {showItems && items.length > 0 && (
+        <div className="card">
+          <h2 style={{marginBottom:6,fontSize:15}}>
+            Applicable DVA Item Numbers
+            <span style={{fontSize:12,fontWeight:400,color:'var(--text-secondary)',marginLeft:10}}>
+              {cardType === 'gold' ? 'Gold Card' : 'White Card'} · {specialty === 'gp' ? 'GP' : specialty === 'specialist' ? 'Specialist / Consultant Physician' : 'Consultant Psychiatrist'} · {modality === 'in-person' ? 'In Person' : modality === 'telehealth-video' ? 'Video' : 'Phone'}
+            </span>
+          </h2>
+          <div style={{marginBottom:14,padding:'8px 12px',background:'var(--warn-light)',border:'1px solid #f5c842',borderRadius:6,fontSize:12,lineHeight:1.6,color:'#5f3800'}}>
+            <strong>Fees shown are MBS schedule fees (Nov 2025) for reference only.</strong> DVA schedule fees are set separately and are generally higher. Verify current DVA fees at <strong>dva.gov.au</strong> before billing. DVA pays the full DVA schedule fee directly — no Medicare benefit, no patient out-of-pocket for covered services.
+          </div>
+
+          <div className="card" style={{padding:0,overflow:'hidden',marginBottom:0}}>
+            {items.map((item, i) => (
+              <div key={i} className="browse-item" style={{cursor:'default'}}>
+                <div className="item-num" style={{color:'var(--primary)'}}>{item.item}</div>
+                <div className="item-desc" style={{flex:1}}>{item.label}</div>
+                <div className="item-fee" style={{color:'var(--text-secondary)',fontSize:12,whiteSpace:'nowrap'}}>
+                  MBS ref: ${item.fee.toFixed(2)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {showItems && items.length === 0 && modality && (
+        <div className="card">
+          <div style={{color:'var(--text-secondary)',fontSize:13}}>
+            No DVA items found for this combination. Phone attendances for initial specialist/psychiatrist attendances are generally not available under DVA — video or in-person is required for initial consults.
+          </div>
+        </div>
+      )}
+
+      {/* DVA General Rules */}
+      {canBill && (
+        <div className="card">
+          <h2 style={{fontSize:15,marginBottom:12}}>DVA Billing — Key Rules</h2>
+          <div style={{fontSize:13,lineHeight:1.75,color:'var(--text)'}}>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>Provider registration:</strong> You must be a registered DVA provider to bill DVA. Registration is separate to Medicare provider registration. Check your registration at myepractice.dva.gov.au.
+            </div>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>How to bill:</strong> DVA claims are submitted via ECLIPSE or Health Professional Online Services (HPOS). DVA does not use the standard Medicare claiming channel for fee-for-service claims.
+            </div>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>Referral requirements:</strong> Same as MBS — a valid referral is required for specialist and psychiatrist attendances. Referral periods are the same (12 months for GP referrals, 3 months for specialist-to-specialist referrals, indefinite for certain conditions).
+            </div>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>Gold Card:</strong> DVA pays 100% of the DVA schedule fee. Providers can charge above the DVA schedule fee but the patient is then liable for the gap — this is generally discouraged and some facilities have agreements to bulk-bill DVA.
+            </div>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>Telehealth:</strong> DVA accepts telehealth claims for most consultation items. The patient must consent to the modality. The same MBS telehealth eligibility requirements generally apply.
+            </div>
+            <div style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+              <strong>After-hours / home visits:</strong> DVA pays higher fees for after-hours and home visit items. These are the same MBS after-hours item numbers (e.g. Group A6/A7) but at DVA rates.
+            </div>
+            <div>
+              <strong>Veterans' Compensation health care:</strong> Some veterans receive health care under Compensation or SRCA/MRCA — different rules apply. Confirm with the veteran which scheme covers them.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {canBill && (
+        <div style={{textAlign:'center',marginTop:4,marginBottom:16}}>
+          <button className="btn" onClick={reset} style={{color:'var(--danger)',borderColor:'var(--danger)'}}>Reset</button>
         </div>
       )}
     </div>
